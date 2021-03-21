@@ -2,6 +2,7 @@
 # Cube_Timer v0.0.1 --------- SnapFlip20
 
 import tkinter as tk
+from tkinter import messagebox
 import os, time, sys
 
 sys.path.append("./scr")
@@ -39,7 +40,10 @@ def reset(*_):
 
 class Timer(tk.Frame):
     def __init__(self):
-        global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time, time_txt, logo_image
+        global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time,\
+            time_txt, logo_image,\
+                color1
+        
         mainWindow.title('CubeTimer v0.0.1')
         time_running = False
         start_time = time.time()
@@ -49,12 +53,26 @@ class Timer(tk.Frame):
 
         # ---Main UI Setting start----------------------------
         # logo image
-        logo_image = tk.PhotoImage(file = "Cube_Timer_logo.gif")
-        logo_show = tk.Label(mainWindow, image = logo_image)
-        logo_show.place(x = 20, y = 20)
+        try:
+            logo_image = tk.PhotoImage(file = "Cube_Timer_log.gif")
+            logo_show = tk.Label(mainWindow, image = logo_image)
+            logo_show.place(x = 20, y = 20)
+        except tk.TclError:
+            sys.stdout.write('cannot find "Cube_Timer_logo.gif".\n')
+            messagebox.showerror(title = 'Exception', message = '파일 "Cube_Timer_logo.gif"를 찾을 수 없습니다.')
+            sys.exit()
 
-        scramble_box = tk.Entry(mainWindow, font = '나눔고딕, 20', relief = 'solid')
-        scramble_box.place(x = 50, y = 275, width = 350, height = 100)
+
+        # scramble
+        scramble_info = tk.Label(mainWindow, font = ('나눔고딕', 20), text = 'Scramble')
+        scramble_info.place(x = 50, y = 200)
+        scramble_refresh = False # 임시
+        scramble_box = tk.Entry(mainWindow, font = ('나눔고딕', 20), relief = 'solid')
+        scramble_box.place(x = 50, y = 250, width = 350, height = 100)
+
+        color1 = tk.PhotoImage(file = "image/{}".format('yellow'+'.gif'))
+        colorf1 = tk.Label(mainWindow, image = color1)
+        colorf1.place(x = 430, y = 230)
 
         # timer
         time_txt = tk.Label(mainWindow, text = '0.000', font = ('consolas 35 bold'))
@@ -62,6 +80,8 @@ class Timer(tk.Frame):
         mainWindow.bind('<KeyRelease-space>', start)
         reset()
 
+        time_info = tk.Label(mainWindow, font = ('나눔고딕', 15), text = '시작하거나 멈추려면 Space키를 누르세요')
+        time_info.place(x = 55, y = 550)
         
 
         # ---Main UI Setting end----------------------------
