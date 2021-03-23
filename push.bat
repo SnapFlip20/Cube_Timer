@@ -1,6 +1,6 @@
 @echo off
 title git_push_program
-mode con cols=30 lines=10
+mode con cols=100 lines=30
 
 :main
 
