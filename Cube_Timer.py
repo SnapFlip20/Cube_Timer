@@ -6,7 +6,7 @@ from tkinter import messagebox
 import os, time, sys
 
 sys.path.append("./scr")
-#from genScramble import scrdebug
+import genScramble
 
 def run():
     global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time
@@ -58,10 +58,9 @@ class Timer(tk.Frame):
             logo_show = tk.Label(mainWindow, image = logo_image)
             logo_show.place(x = 20, y = 20)
         except tk.TclError:
-            sys.stdout.write('cannot find "Cube_Timer_logo.gif".\n')
-            messagebox.showerror(title = 'Exception', message = '파일 "Cube_Timer_logo.gif"를 찾을 수 없습니다.')
+            sys.stderr.write('cannot find "Cube_Timer_logo.gif".\n')
+            messagebox.showerror(title = 'Exception', message = '파일 "Cube_Timer_logo.gif" 을(를) 찾을 수 없습니다.')
             sys.exit()
-
 
         # scramble
         # 스크램블 박스 그냥 텍스트로 바꾸기!!
@@ -71,9 +70,40 @@ class Timer(tk.Frame):
         scramble_box = tk.Entry(mainWindow, font = ('나눔고딕', 20), relief = 'solid')
         scramble_box.place(x = 50, y = 250, width = 350, height = 100)
 
-        color1 = tk.PhotoImage(file = "image/{}".format('yellow'+'.gif'))
-        colorf1 = tk.Label(mainWindow, image = color1)
-        colorf1.place(x = 430, y = 230)
+        try:
+            scramble_lst = genScramble.gen_scramble()
+            #print(scramble_lst)
+            color1 = tk.PhotoImage(file = "image/{}".format('yellow'+'.gif'))
+            colorf1 = tk.Label(mainWindow, image = color1)
+            colorf1.place(x = 430, y = 230)
+            color2 = tk.PhotoImage(file = "image/{}".format('yellow'+'.gif'))
+            colorf2 = tk.Label(mainWindow, image = color1)
+            colorf2.place(x = 475, y = 230)
+            color3 = tk.PhotoImage(file = "image/{}".format('yellow'+'.gif'))
+            colorf3 = tk.Label(mainWindow, image = color1)
+            colorf3.place(x = 520, y = 230)
+            color4 = tk.PhotoImage(file = "image/{}".format('yellow'+'.gif'))
+            colorf4 = tk.Label(mainWindow, image = color1)
+            colorf4.place(x = 430, y = 275)
+            color5 = tk.PhotoImage(file = "image/{}".format('yellow'+'.gif'))
+            colorf5 = tk.Label(mainWindow, image = color1)
+            colorf5.place(x = 475, y = 275)
+            color6 = tk.PhotoImage(file = "image/{}".format('yellow'+'.gif'))
+            colorf6 = tk.Label(mainWindow, image = color1)
+            colorf6.place(x = 520, y = 275)
+            color7 = tk.PhotoImage(file = "image/{}".format('yellow'+'.gif'))
+            colorf7 = tk.Label(mainWindow, image = color1)
+            colorf7.place(x = 430, y = 320)
+            color8 = tk.PhotoImage(file = "image/{}".format('yellow'+'.gif'))
+            colorf8 = tk.Label(mainWindow, image = color1)
+            colorf8.place(x = 475, y = 320)
+            color9 = tk.PhotoImage(file = "image/{}".format('yellow'+'.gif'))
+            colorf9 = tk.Label(mainWindow, image = color1)
+            colorf9.place(x = 520, y = 320)
+        except:
+            sys.stderr.write('cannot find color image.\n')
+            messagebox.showerror(title = 'Exception', message = 'color image 을(를) 찾을 수 없습니다.')
+            sys.exit()
 
         # timer
         time_txt = tk.Label(mainWindow, text = '0.000', font = ('consolas 35 bold'))
