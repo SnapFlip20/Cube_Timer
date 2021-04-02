@@ -13,3 +13,5 @@
     * 몇몇 예외 처리 추가
 * 0.0.2
     * 파일 /scr.genScramble.py 와 /scr.showScrambleImg.py 을 Cube_Timer.py에서 사용할 수 있게끔 적용
+* 0.0.3
+    * 버전을 변경할 때 메인 윈도우의 title과 배치 파일 push.bat에 있는 버전명도 함께 변경되도록 수정

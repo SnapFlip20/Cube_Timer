@@ -8,7 +8,20 @@ import os, time, sys
 sys.path.append("./scr")
 import genScramble, showScrambleImg
 
-version = 'v0.0.2'
+version = 'v0.0.3'
+
+def pusher():
+    fbat = open('push.bat', 'w')
+    fbat.write('@echo off\n')
+    fbat.write('title git_push_program\n')
+    fbat.write('mode con cols=100 lines=30\n')
+    fbat.write(':main\n')
+    fbat.write('git add .\n')
+    fbat.write('git commit -m "CubeTimer_{}"\n'.format(version))
+    fbat.write('git push\n')
+    fbat.write('echo done\n')
+    fbat.write('pause>nul\n')
+    fbat.close()
 
 def run():
     global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time
@@ -137,6 +150,7 @@ if __name__ == "__main__":
     mainWindow.geometry("600x900+200+100")
     mainWindow.resizable(width = False, height = False)
 
+    pusher()
     Timer()
     run()
     mainWindow.mainloop()
