@@ -6,7 +6,7 @@ from tkinter import messagebox
 import os, time, sys
 
 sys.path.append("./scr")
-import genScramble
+import genScramble, showScrambleImg
 
 def run():
     global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time
@@ -63,43 +63,43 @@ class Timer(tk.Frame):
             sys.exit()
 
         # scramble
-        # 스크램블 박스 그냥 텍스트로 바꾸기!!
+        # TODO: 설명 추가 -> 윗면을 흰색, 앞면을 빨간색으로 한 뒤 섞으시오
         scramble_info = tk.Label(mainWindow, font = ('나눔고딕', 20), text = 'Scramble')
         scramble_info.place(x = 50, y = 200)
         scramble_refresh = False # 임시
 
-        #scramble_box = tk.Entry(mainWindow, font = ('나눔고딕', 20), relief = 'solid')
         scramble_box = tk.Text(mainWindow, font = ('나눔고딕 bold', 15), wrap = 'word', state = 'normal', width = 10)
         scramble_box.place(x = 50, y = 250, width = 350, height = 100)
 
         try:
             scramble_lst = genScramble.gen_scramble()
+            scr_result = showScrambleImg.return_color(scramble_lst)
             #print(scramble_lst)
-            color1 = tk.PhotoImage(file = "image/{}".format('default'+'.gif'))
+            color1 = tk.PhotoImage(file = "image/{}".format(scr_result[0]+'.gif'))
             colorf1 = tk.Label(mainWindow, image = color1)
             colorf1.place(x = 430, y = 230)
-            color2 = tk.PhotoImage(file = "image/{}".format('default'+'.gif'))
+            color2 = tk.PhotoImage(file = "image/{}".format(scr_result[1]+'.gif'))
             colorf2 = tk.Label(mainWindow, image = color2)
             colorf2.place(x = 475, y = 230)
-            color3 = tk.PhotoImage(file = "image/{}".format('default'+'.gif'))
+            color3 = tk.PhotoImage(file = "image/{}".format(scr_result[2]+'.gif'))
             colorf3 = tk.Label(mainWindow, image = color3)
             colorf3.place(x = 520, y = 230)
-            color4 = tk.PhotoImage(file = "image/{}".format('default'+'.gif'))
+            color4 = tk.PhotoImage(file = "image/{}".format(scr_result[3]+'.gif'))
             colorf4 = tk.Label(mainWindow, image = color4)
             colorf4.place(x = 430, y = 275)
-            color5 = tk.PhotoImage(file = "image/{}".format('default'+'.gif'))
+            color5 = tk.PhotoImage(file = "image/{}".format(scr_result[4]+'.gif'))
             colorf5 = tk.Label(mainWindow, image = color5)
             colorf5.place(x = 475, y = 275)
-            color6 = tk.PhotoImage(file = "image/{}".format('default'+'.gif'))
+            color6 = tk.PhotoImage(file = "image/{}".format(scr_result[5]+'.gif'))
             colorf6 = tk.Label(mainWindow, image = color6)
             colorf6.place(x = 520, y = 275)
-            color7 = tk.PhotoImage(file = "image/{}".format('default'+'.gif'))
+            color7 = tk.PhotoImage(file = "image/{}".format(scr_result[6]+'.gif'))
             colorf7 = tk.Label(mainWindow, image = color7)
             colorf7.place(x = 430, y = 320)
-            color8 = tk.PhotoImage(file = "image/{}".format('default'+'.gif'))
+            color8 = tk.PhotoImage(file = "image/{}".format(scr_result[7]+'.gif'))
             colorf8 = tk.Label(mainWindow, image = color8)
             colorf8.place(x = 475, y = 320)
-            color9 = tk.PhotoImage(file = "image/{}".format('default'+'.gif'))
+            color9 = tk.PhotoImage(file = "image/{}".format(scr_result[8]+'.gif'))
             colorf9 = tk.Label(mainWindow, image = color9)
             colorf9.place(x = 520, y = 320)
         except:
@@ -128,9 +128,6 @@ class Timer(tk.Frame):
         global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
         print('이 문장이 출력이 되나요?')
         print(time_running)
-
-def debug():
-    None
 
 if __name__ == "__main__":
     mainWindow = tk.Tk()
