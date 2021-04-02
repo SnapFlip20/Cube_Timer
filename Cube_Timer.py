@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.0.1 --------- SnapFlip20
+# Cube_Timer v0.0.2 --------- SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox
@@ -7,6 +7,8 @@ import os, time, sys
 
 sys.path.append("./scr")
 import genScramble, showScrambleImg
+
+version = 'v0.0.2'
 
 def run():
     global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time
@@ -44,7 +46,7 @@ class Timer(tk.Frame):
             time_txt, logo_image,\
                 color1, color2, color3, color4, color5, color6, color7, color8, color9
         
-        mainWindow.title('CubeTimer v0.0.1')
+        mainWindow.title('CubeTimer ' + version)
         time_running = False
         start_time = time.time()
         stop_time = time.time()
@@ -64,6 +66,7 @@ class Timer(tk.Frame):
 
         # scramble
         # TODO: 설명 추가 -> 윗면을 흰색, 앞면을 빨간색으로 한 뒤 섞으시오
+        # 근데 showScrambleImg.return_color에서 elif문만 손보면 초록색 앞면 기준으로도 바꿀 수 있지 않을까
         scramble_info = tk.Label(mainWindow, font = ('나눔고딕', 20), text = 'Scramble')
         scramble_info.place(x = 50, y = 200)
         scramble_refresh = False # 임시
@@ -117,8 +120,6 @@ class Timer(tk.Frame):
 
         time_info = tk.Label(mainWindow, font = ('나눔고딕', 15), text = '시작하거나 멈추려면 Space키를 누르세요')
         time_info.place(x = 55, y = 550)
-        
-
         # ---Main UI Setting end----------------------------
 
         print('Timer.__init__() is executed.')
@@ -128,6 +129,8 @@ class Timer(tk.Frame):
         global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
         print('이 문장이 출력이 되나요?')
         print(time_running)
+
+
 
 if __name__ == "__main__":
     mainWindow = tk.Tk()
