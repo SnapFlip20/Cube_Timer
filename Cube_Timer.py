@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.0.2 --------- SnapFlip20
+# Cube_Timer v0.0.4 --------- SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox
@@ -8,7 +8,7 @@ import os, time, sys
 sys.path.append("./scr")
 import genScramble, showScrambleImg
 
-version = 'v0.0.3'
+version = 'v0.0.4'
 
 def pusher():
     fbat = open('push.bat', 'w')
@@ -40,11 +40,13 @@ def start(*_):
         time_running = True
         start_time = time.time()
         previous_time = elapsed_time
+
 def pause(*_):
     global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
     mainWindow.bind('<KeyRelease-space>', reset)
     time_running = False
     previous_time = elapsed_time
+
 def reset(*_):
     global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
     mainWindow.bind('<KeyRelease-space>', start)
@@ -53,11 +55,60 @@ def reset(*_):
     previous_time = 0.0
     time_txt.configure(text = '{:7.3f}'.format(elapsed_time))
 
+def scr_refresh():
+    global scramble_info, scramble_box, scramble_lst, scr_refresh_bt,\
+        color1, color2, color3, color4, color5, color6, color7, color8, color9
+    
+    scramble_info = tk.Label(mainWindow, font = ('나눔고딕', 20), text = 'Scramble')
+    scramble_info.place(x = 50, y = 200)
+
+    scramble_box = tk.Text(mainWindow, font = ('나눔고딕 bold', 15), wrap = 'word', state = 'normal', width = 10)
+    scramble_box.place(x = 50, y = 250, width = 350, height = 100)
+
+    try:
+        scramble_lst = genScramble.gen_scramble()
+        scr_result = showScrambleImg.return_color(scramble_lst)
+        #print(scramble_lst)
+        color1 = tk.PhotoImage(file = "image/{}".format(scr_result[0]+'.gif'))
+        colorf1 = tk.Label(mainWindow, image = color1)
+        colorf1.place(x = 430, y = 230)
+        color2 = tk.PhotoImage(file = "image/{}".format(scr_result[1]+'.gif'))
+        colorf2 = tk.Label(mainWindow, image = color2)
+        colorf2.place(x = 475, y = 230)
+        color3 = tk.PhotoImage(file = "image/{}".format(scr_result[2]+'.gif'))
+        colorf3 = tk.Label(mainWindow, image = color3)
+        colorf3.place(x = 520, y = 230)
+        color4 = tk.PhotoImage(file = "image/{}".format(scr_result[3]+'.gif'))
+        colorf4 = tk.Label(mainWindow, image = color4)
+        colorf4.place(x = 430, y = 275)
+        color5 = tk.PhotoImage(file = "image/{}".format(scr_result[4]+'.gif'))
+        colorf5 = tk.Label(mainWindow, image = color5)
+        colorf5.place(x = 475, y = 275)
+        color6 = tk.PhotoImage(file = "image/{}".format(scr_result[5]+'.gif'))
+        colorf6 = tk.Label(mainWindow, image = color6)
+        colorf6.place(x = 520, y = 275)
+        color7 = tk.PhotoImage(file = "image/{}".format(scr_result[6]+'.gif'))
+        colorf7 = tk.Label(mainWindow, image = color7)
+        colorf7.place(x = 430, y = 320)
+        color8 = tk.PhotoImage(file = "image/{}".format(scr_result[7]+'.gif'))
+        colorf8 = tk.Label(mainWindow, image = color8)
+        colorf8.place(x = 475, y = 320)
+        color9 = tk.PhotoImage(file = "image/{}".format(scr_result[8]+'.gif'))
+        colorf9 = tk.Label(mainWindow, image = color9)
+        colorf9.place(x = 520, y = 320)
+    except:
+        sys.stderr.write('cannot find color image.\n')
+        messagebox.showerror(title = 'Exception', message = 'color image 을(를) 찾을 수 없습니다.')
+        sys.exit()
+    scramble_box.insert(tk.INSERT, scramble_lst)
+    scramble_box.configure(state = 'disabled') # 스크램블 박스에 텍스트를 입력할 수 없게 변경
+
+
+
 class Timer(tk.Frame):
     def __init__(self):
         global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time,\
-            time_txt, logo_image,\
-                color1, color2, color3, color4, color5, color6, color7, color8, color9
+            time_txt, logo_image
         
         mainWindow.title('CubeTimer ' + version)
         time_running = False
@@ -79,51 +130,9 @@ class Timer(tk.Frame):
 
         # scramble
         # TODO: 설명 추가 -> 윗면을 흰색, 앞면을 빨간색으로 한 뒤 섞으시오
-        # 근데 showScrambleImg.return_color에서 elif문만 손보면 초록색 앞면 기준으로도 바꿀 수 있지 않을까
-        scramble_info = tk.Label(mainWindow, font = ('나눔고딕', 20), text = 'Scramble')
-        scramble_info.place(x = 50, y = 200)
-        scramble_refresh = False # 임시
-
-        scramble_box = tk.Text(mainWindow, font = ('나눔고딕 bold', 15), wrap = 'word', state = 'normal', width = 10)
-        scramble_box.place(x = 50, y = 250, width = 350, height = 100)
-
-        try:
-            scramble_lst = genScramble.gen_scramble()
-            scr_result = showScrambleImg.return_color(scramble_lst)
-            #print(scramble_lst)
-            color1 = tk.PhotoImage(file = "image/{}".format(scr_result[0]+'.gif'))
-            colorf1 = tk.Label(mainWindow, image = color1)
-            colorf1.place(x = 430, y = 230)
-            color2 = tk.PhotoImage(file = "image/{}".format(scr_result[1]+'.gif'))
-            colorf2 = tk.Label(mainWindow, image = color2)
-            colorf2.place(x = 475, y = 230)
-            color3 = tk.PhotoImage(file = "image/{}".format(scr_result[2]+'.gif'))
-            colorf3 = tk.Label(mainWindow, image = color3)
-            colorf3.place(x = 520, y = 230)
-            color4 = tk.PhotoImage(file = "image/{}".format(scr_result[3]+'.gif'))
-            colorf4 = tk.Label(mainWindow, image = color4)
-            colorf4.place(x = 430, y = 275)
-            color5 = tk.PhotoImage(file = "image/{}".format(scr_result[4]+'.gif'))
-            colorf5 = tk.Label(mainWindow, image = color5)
-            colorf5.place(x = 475, y = 275)
-            color6 = tk.PhotoImage(file = "image/{}".format(scr_result[5]+'.gif'))
-            colorf6 = tk.Label(mainWindow, image = color6)
-            colorf6.place(x = 520, y = 275)
-            color7 = tk.PhotoImage(file = "image/{}".format(scr_result[6]+'.gif'))
-            colorf7 = tk.Label(mainWindow, image = color7)
-            colorf7.place(x = 430, y = 320)
-            color8 = tk.PhotoImage(file = "image/{}".format(scr_result[7]+'.gif'))
-            colorf8 = tk.Label(mainWindow, image = color8)
-            colorf8.place(x = 475, y = 320)
-            color9 = tk.PhotoImage(file = "image/{}".format(scr_result[8]+'.gif'))
-            colorf9 = tk.Label(mainWindow, image = color9)
-            colorf9.place(x = 520, y = 320)
-        except:
-            sys.stderr.write('cannot find color image.\n')
-            messagebox.showerror(title = 'Exception', message = 'color image 을(를) 찾을 수 없습니다.')
-            sys.exit()
-        scramble_box.insert(tk.INSERT, scramble_lst)
-        scramble_box.configure(state = 'disabled')
+        scr_refresh_bt = tk.Button(mainWindow, font = ('나눔고딕', 12), text = '새로고침', command = scr_refresh)
+        scr_refresh_bt.place(x = 300, y = 200, width = 90, height = 40)
+        scr_refresh()
 
         # timer
         time_txt = tk.Label(mainWindow, text = '0.000', font = ('consolas 35 bold'))
@@ -133,6 +142,8 @@ class Timer(tk.Frame):
 
         time_info = tk.Label(mainWindow, font = ('나눔고딕', 15), text = '시작하거나 멈추려면 Space키를 누르세요')
         time_info.place(x = 55, y = 550)
+
+        # 
         # ---Main UI Setting end----------------------------
 
         print('Timer.__init__() is executed.')
