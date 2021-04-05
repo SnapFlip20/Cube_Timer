@@ -10,7 +10,7 @@ import genScramble, showScrambleImg
 
 version = 'v0.0.4'
 
-def pusher():
+def pusher(): # batch file generator for Github push
     fbat = open('push.bat', 'w')
     fbat.write('@echo off\n')
     fbat.write('title git_push_program\n')
@@ -34,30 +34,10 @@ def run():
     
     mainWindow.after(10, run)
 
-def start(*_):
-    global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
-    if not time_running:
-        time_running = True
-        start_time = time.time()
-        previous_time = elapsed_time
-
-def pause(*_):
-    global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
-    mainWindow.bind('<KeyRelease-space>', reset)
-    time_running = False
-    previous_time = elapsed_time
-
-def reset(*_):
-    global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
-    mainWindow.bind('<KeyRelease-space>', start)
-    time_running = False
-    elapsed_time = 0.0
-    previous_time = 0.0
-    time_txt.configure(text = '{:7.3f}'.format(elapsed_time))
-
-def scr_refresh():
+def scr_refresh(*_):
     global scramble_info, scramble_box, scramble_lst, scr_refresh_bt,\
-        color1, color2, color3, color4, color5, color6, color7, color8, color9
+        color1, color2, color3, color4, color5, color6, color7, color8, color9,\
+            scr_help1, scr_help2
     
     scramble_info = tk.Label(mainWindow, font = ('나눔고딕', 20), text = 'Scramble')
     scramble_info.place(x = 50, y = 200)
@@ -102,6 +82,36 @@ def scr_refresh():
         sys.exit()
     scramble_box.insert(tk.INSERT, scramble_lst)
     scramble_box.configure(state = 'disabled') # 스크램블 박스에 텍스트를 입력할 수 없게 변경
+
+    scr_help1 = tk.Label(mainWindow, font = ('나눔고딕', 11), text = '윗면이 흰색, 앞면이 초록색인\n상태에서 큐브를 섞어주세요.')
+    scr_help1.place(x = 403, y = 185)
+    scr_help2 = tk.Label(mainWindow, font = ('나눔고딕', 10), text = '앞면(초록색)')
+    scr_help2.place(x = 460, y = 360)
+
+def start(*_):
+    global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
+    if not time_running:
+        time_running = True
+        start_time = time.time()
+        previous_time = elapsed_time
+
+def pause(*_):
+    global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
+    scr_refresh()
+    mainWindow.bind('<KeyRelease-space>', reset)
+    time_running = False
+    previous_time = elapsed_time
+
+def reset(*_):
+    global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
+    mainWindow.bind('<KeyRelease-space>', start)
+    time_running = False
+    elapsed_time = 0.0
+    previous_time = 0.0
+    time_txt.configure(text = '{:7.3f}'.format(elapsed_time))
+
+def record_list():
+    global rec1
 
 
 
