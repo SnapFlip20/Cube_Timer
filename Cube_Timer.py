@@ -45,10 +45,12 @@ def scr_refresh(*_):
     scramble_box = tk.Text(mainWindow, font = ('나눔고딕 bold', 15), wrap = 'word', state = 'normal', width = 10)
     scramble_box.place(x = 50, y = 250, width = 350, height = 100)
 
+    if time_running:
+        reset()
+
     try:
         scramble_lst = genScramble.gen_scramble()
         scr_result = showScrambleImg.return_color(scramble_lst)
-        #print(scramble_lst)
         color1 = tk.PhotoImage(file = "image/{}".format(scr_result[0]+'.gif'))
         colorf1 = tk.Label(mainWindow, image = color1)
         colorf1.place(x = 430, y = 230)
@@ -98,9 +100,10 @@ def start(*_):
 def pause(*_):
     global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
     scr_refresh()
-    mainWindow.bind('<KeyRelease-space>', reset)
+    mainWindow.bind('<KeyRelease-space>', start)
     time_running = False
-    previous_time = elapsed_time
+    previous_time = elapsed_time = 0.0
+
 
 def reset(*_):
     global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
@@ -109,6 +112,7 @@ def reset(*_):
     elapsed_time = 0.0
     previous_time = 0.0
     time_txt.configure(text = '{:7.3f}'.format(elapsed_time))
+
 
 def record_list():
     global rec1
