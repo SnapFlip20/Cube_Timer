@@ -8,7 +8,7 @@ import os, time, sys
 sys.path.append("./scr")
 import genScramble, showScrambleImg
 
-version = 'v0.0.4'
+version = 'v0.0.5'
 
 def pusher(): # batch file generator for Github push
     fbat = open('push.bat', 'w')
@@ -44,9 +44,6 @@ def scr_refresh(*_):
 
     scramble_box = tk.Text(mainWindow, font = ('나눔고딕 bold', 15), wrap = 'word', state = 'normal', width = 10)
     scramble_box.place(x = 50, y = 250, width = 350, height = 100)
-
-    if time_running:
-        reset()
 
     try:
         scramble_lst = genScramble.gen_scramble()
@@ -100,6 +97,7 @@ def start(*_):
 def pause(*_):
     global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
     scr_refresh()
+    record(str(round(elapsed_time, 3)))
     mainWindow.bind('<KeyRelease-space>', start)
     time_running = False
     previous_time = elapsed_time = 0.0
@@ -114,8 +112,10 @@ def reset(*_):
     time_txt.configure(text = '{:7.3f}'.format(elapsed_time))
 
 
-def record_list():
-    global rec1
+def record(t):
+    frec = open('record.cbtm', 'a')
+    frec.write(t + '\n')
+    frec.close()
 
 
 
@@ -146,7 +146,8 @@ class Timer(tk.Frame):
         # TODO: 설명 추가 -> 윗면을 흰색, 앞면을 빨간색으로 한 뒤 섞으시오
         scr_refresh_bt = tk.Button(mainWindow, font = ('나눔고딕', 12), text = '새로고침', command = scr_refresh)
         scr_refresh_bt.place(x = 300, y = 200, width = 90, height = 40)
-        scr_refresh()
+        if not time_running:
+            scr_refresh()
 
         # timer
         time_txt = tk.Label(mainWindow, text = '0.000', font = ('consolas 35 bold'))
@@ -156,8 +157,7 @@ class Timer(tk.Frame):
 
         time_info = tk.Label(mainWindow, font = ('나눔고딕', 15), text = '시작하거나 멈추려면 Space키를 누르세요')
         time_info.place(x = 55, y = 550)
-
-        # 
+ 
         # ---Main UI Setting end----------------------------
 
         print('Timer.__init__() is executed.')
