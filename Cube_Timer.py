@@ -111,11 +111,13 @@ def reset(*_):
     previous_time = 0.0
     time_txt.configure(text = '{:7.3f}'.format(elapsed_time))
 
-
 def record(t):
     frec = open('record.cbtm', 'a')
     frec.write(t + '\n')
     frec.close()
+
+def load_record():
+    None
 
 
 
@@ -143,7 +145,6 @@ class Timer(tk.Frame):
             sys.exit()
 
         # scramble
-        # TODO: 설명 추가 -> 윗면을 흰색, 앞면을 빨간색으로 한 뒤 섞으시오
         scr_refresh_bt = tk.Button(mainWindow, font = ('나눔고딕', 12), text = '새로고침', command = scr_refresh)
         scr_refresh_bt.place(x = 300, y = 200, width = 90, height = 40)
         if not time_running:
