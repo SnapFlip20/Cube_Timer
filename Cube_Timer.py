@@ -1,14 +1,24 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.0.4 --------- SnapFlip20
+# Cube_Timer v0.0.7 --------- SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox
 import os, time, sys
 
-sys.path.append("./scr")
-import genScramble, showScrambleImg
+try:
+    sys.path.append("./scr")
+except:
+    sys.stderr.write('cannot find /scr.\n')
+try:
+    import genScramble
+except ModuleNotFoundError:
+    sys.stderr.write('cannot find genScramble.py.\n')
+try:
+    import showScrambleImg
+except ModuleNotFoundError:
+    sys.stderr.write('cannot find showScrambleImg.py.\n')
 
-version = 'v0.0.5'
+version = 'v0.0.7'
 
 def pusher(): # batch file generator for Github push
     fbat = open('push.bat', 'w')
@@ -35,7 +45,7 @@ def run():
     mainWindow.after(10, run)
 
 def scr_refresh(*_):
-    global scramble_info, scramble_box, scramble_lst, scr_refresh_bt,\
+    global scramble_info, scramble_box, scramble_lst,\
         color1, color2, color3, color4, color5, color6, color7, color8, color9,\
             scr_help1, scr_help2
     
@@ -98,10 +108,10 @@ def pause(*_):
     global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
     scr_refresh()
     record(str(round(elapsed_time, 3)))
+    load_record()
     mainWindow.bind('<KeyRelease-space>', start)
     time_running = False
     previous_time = elapsed_time = 0.0
-
 
 def reset(*_):
     global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
@@ -112,19 +122,80 @@ def reset(*_):
     time_txt.configure(text = '{:7.3f}'.format(elapsed_time))
 
 def record(t):
-    frec = open('record.cbtm', 'a')
-    frec.write(t + '\n')
-    frec.close()
+    farec = open('record.cbtm', 'a')
+    farec.write(t + '\n')
+    farec.close()
 
 def load_record():
-    None
+    global record_info1,\
+        rec1, rec2, rec3, rec4, rec5, rec6, rec7, rec8, rec9, rec10, rec11, rec12
+    record_info1 = tk.Label(mainWindow, font = ('나눔고딕 bold', 14), text = '-최근 기록-')
+    record_info1.place(x = 448, y = 410)
+    rec1 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec1.place(x = 435, y = 450, width = 125, height = 30)
+    rec2 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec2.place(x = 435, y = 480, width = 125, height = 30)
+    rec3 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec3.place(x = 435, y = 510, width = 125, height = 30)
+    rec4 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec4.place(x = 435, y = 540, width = 125, height = 30)
+    rec5 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec5.place(x = 435, y = 570, width = 125, height = 30)
+    rec6 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec6.place(x = 435, y = 600, width = 125, height = 30)
+    rec7 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec7.place(x = 435, y = 630, width = 125, height = 30)
+    rec8 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec8.place(x = 435, y = 660, width = 125, height = 30)
+    rec9 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec9.place(x = 435, y = 690, width = 125, height = 30)
+    rec10 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec10.place(x = 435, y = 720, width = 125, height = 30)
+    rec11 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec11.place(x = 435, y = 750, width = 125, height = 30)
+    rec12 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec12.place(x = 435, y = 780, width = 125, height = 30)
+
+    # load recent records
+    try:
+        fwrec = open('record.cbtm', 'r')
+        rec1.insert(tk.INSERT, fwrec.readline())
+        rec1.configure(state = 'disabled')
+        rec2.insert(tk.INSERT, fwrec.readline())
+        rec2.configure(state = 'disabled')
+        rec3.insert(tk.INSERT, fwrec.readline())
+        rec3.configure(state = 'disabled')
+        rec4.insert(tk.INSERT, fwrec.readline())
+        rec4.configure(state = 'disabled')
+        rec5.insert(tk.INSERT, fwrec.readline())
+        rec5.configure(state = 'disabled')
+        rec6.insert(tk.INSERT, fwrec.readline())
+        rec6.configure(state = 'disabled')
+        rec7.insert(tk.INSERT, fwrec.readline())
+        rec7.configure(state = 'disabled')
+        rec8.insert(tk.INSERT, fwrec.readline())
+        rec8.configure(state = 'disabled')
+        rec9.insert(tk.INSERT, fwrec.readline())
+        rec9.configure(state = 'disabled')
+        rec10.insert(tk.INSERT, fwrec.readline())
+        rec10.configure(state = 'disabled')
+        rec11.insert(tk.INSERT, fwrec.readline())
+        rec11.configure(state = 'disabled')
+        rec12.insert(tk.INSERT, fwrec.readline())
+        rec12.configure(state = 'disabled')
+        fwrec.close()
+    except:
+        sys.stderr.write('cannot find record.cbtm.\n')
+        messagebox.showerror(title = 'Exception', message = '파일 "record.cbtm" 을(를) 찾을 수 없습니다.')
+        sys.exit()
 
 
 
 class Timer(tk.Frame):
     def __init__(self):
         global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time,\
-            time_txt, logo_image
+            time_txt, logo_image,\
+                penalty_bt, help_bt
         
         mainWindow.title('CubeTimer ' + version)
         time_running = False
@@ -133,7 +204,7 @@ class Timer(tk.Frame):
         previous_time = 0.0
         elapsed_time = 0.0
 
-        # ---Main UI Setting start----------------------------
+        # ---Main UI setting start----------------------------
         # logo image
         try:
             logo_image = tk.PhotoImage(file = "Cube_Timer_logo.gif")
@@ -156,13 +227,18 @@ class Timer(tk.Frame):
         mainWindow.bind('<KeyRelease-space>', start)
         reset()
 
-        time_info = tk.Label(mainWindow, font = ('나눔고딕', 15), text = '시작하거나 멈추려면 Space키를 누르세요')
-        time_info.place(x = 55, y = 550)
- 
-        # ---Main UI Setting end----------------------------
+        time_info = tk.Label(mainWindow, font = ('나눔고딕', 13), text = '시작하거나 멈추려면 Space키를 누르세요')
+        time_info.place(x = 85, y = 525)
 
-        print('Timer.__init__() is executed.')
-        
+        # etc
+        penalty_bt = tk.Button(mainWindow, font = ('나눔고딕', 12), text = '기록 수정하기')
+        penalty_bt.place(x = 50, y = 610, width = 150, height = 70)
+        help_bt = tk.Button(mainWindow, font = ('나눔고딕', 12), text = '도움말', command = help_win)
+        help_bt.place(x = 50, y = 700, width = 150, height = 70)
+ 
+        # ---Main UI setting end----------------------------
+
+        sys.stdout.write('Timer.__init__() is executed.\n')
 
     def _debug(self):
         global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
@@ -171,13 +247,22 @@ class Timer(tk.Frame):
 
 
 
+def help_win():
+    helpWindow = tk.Tk()
+    helpWindow.geometry("300x300")
+    helpWindow.resizable(width = False, height = False)
+    helpWindow.mainloop()
+
+
+
 if __name__ == "__main__":
     mainWindow = tk.Tk()
-    mainWindow.geometry("600x900+200+100")
+    mainWindow.geometry("600x950")
     mainWindow.resizable(width = False, height = False)
 
     pusher()
     Timer()
+    load_record()
     run()
     mainWindow.mainloop()
     
