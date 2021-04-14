@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.0.7 --------- SnapFlip20
+# Cube_Timer v0.1.0 --------- by SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox
@@ -18,8 +18,9 @@ try:
 except ModuleNotFoundError:
     sys.stderr.write('cannot find showScrambleImg.py.\n')
 
-version = 'v0.0.7'
-
+# ---------------------------------------------------------------- #
+version = 'v0.1.0'
+# ---------------------------------------------------------------- #
 def pusher(): # batch file generator for Github push
     fbat = open('push.bat', 'w')
     fbat.write('@echo off\n')
@@ -32,6 +33,7 @@ def pusher(): # batch file generator for Github push
     fbat.write('echo done\n')
     fbat.write('pause>nul\n')
     fbat.close()
+# ---------------------------------------------------------------- #
 
 def run():
     global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time
@@ -44,7 +46,7 @@ def run():
     
     mainWindow.after(10, run)
 
-def scr_refresh(*_):
+def scr_refresh(*_): # 스크램블 새로고침
     global scramble_info, scramble_box, scramble_lst,\
         color1, color2, color3, color4, color5, color6, color7, color8, color9,\
             scr_help1, scr_help2
@@ -86,8 +88,8 @@ def scr_refresh(*_):
         colorf9 = tk.Label(mainWindow, image = color9)
         colorf9.place(x = 520, y = 320)
     except:
-        sys.stderr.write('cannot find color image.\n')
-        messagebox.showerror(title = 'Exception', message = 'color image 을(를) 찾을 수 없습니다.')
+        sys.stderr.write('exception.\n')
+        messagebox.showerror(title = 'Exception', message = 'Scramble 을(를) 구성하는 도중 오류가 발생했습니다.')
         sys.exit()
     scramble_box.insert(tk.INSERT, scramble_lst)
     scramble_box.configure(state = 'disabled') # 스크램블 박스에 텍스트를 입력할 수 없게 변경
@@ -97,23 +99,26 @@ def scr_refresh(*_):
     scr_help2 = tk.Label(mainWindow, font = ('나눔고딕', 10), text = '앞면(초록색)')
     scr_help2.place(x = 460, y = 360)
 
-def start(*_):
+def start(*_): # 타이머 시작
     global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
     if not time_running:
         time_running = True
         start_time = time.time()
         previous_time = elapsed_time
 
-def pause(*_):
+def pause(*_): # 타이머 정지
     global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
     scr_refresh()
     record(str(round(elapsed_time, 3)))
+    calcAvg5()
+    calcAvg12()
+    best_score()
     load_record()
     mainWindow.bind('<KeyRelease-space>', start)
     time_running = False
     previous_time = elapsed_time = 0.0
 
-def reset(*_):
+def reset(*_): # 타이머 리셋
     global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
     mainWindow.bind('<KeyRelease-space>', start)
     time_running = False
@@ -121,12 +126,12 @@ def reset(*_):
     previous_time = 0.0
     time_txt.configure(text = '{:7.3f}'.format(elapsed_time))
 
-def record(t):
+def record(t): # 측정된 기록을 record.cbtm 파일에 작성
     farec = open('record.cbtm', 'a')
     farec.write(t + '\n')
     farec.close()
 
-def load_record():
+def load_record(): # 최근 기록 표시
     global record_info1,\
         rec1, rec2, rec3, rec4, rec5, rec6, rec7, rec8, rec9, rec10, rec11, rec12
     record_info1 = tk.Label(mainWindow, font = ('나눔고딕 bold', 14), text = '-최근 기록-')
@@ -158,36 +163,207 @@ def load_record():
 
     # load recent records
     try:
-        fwrec = open('record.cbtm', 'r')
-        rec1.insert(tk.INSERT, fwrec.readline())
+        records = []
+        frrec = open('record.cbtm', 'r')
+        for i in frrec.readlines()[::-1]:
+            records.append(i)
+        
+        if len(records) < 12:
+            for i in range(12-len(records)):
+                records.append('')
+        
+        rec1.insert(tk.INSERT, records[0])
         rec1.configure(state = 'disabled')
-        rec2.insert(tk.INSERT, fwrec.readline())
+        rec2.insert(tk.INSERT, records[1])
         rec2.configure(state = 'disabled')
-        rec3.insert(tk.INSERT, fwrec.readline())
+        rec3.insert(tk.INSERT, records[2])
         rec3.configure(state = 'disabled')
-        rec4.insert(tk.INSERT, fwrec.readline())
+        rec4.insert(tk.INSERT, records[3])
         rec4.configure(state = 'disabled')
-        rec5.insert(tk.INSERT, fwrec.readline())
+        rec5.insert(tk.INSERT, records[4])
         rec5.configure(state = 'disabled')
-        rec6.insert(tk.INSERT, fwrec.readline())
+        rec6.insert(tk.INSERT, records[5])
         rec6.configure(state = 'disabled')
-        rec7.insert(tk.INSERT, fwrec.readline())
+        rec7.insert(tk.INSERT, records[6])
         rec7.configure(state = 'disabled')
-        rec8.insert(tk.INSERT, fwrec.readline())
+        rec8.insert(tk.INSERT, records[7])
         rec8.configure(state = 'disabled')
-        rec9.insert(tk.INSERT, fwrec.readline())
+        rec9.insert(tk.INSERT, records[8])
         rec9.configure(state = 'disabled')
-        rec10.insert(tk.INSERT, fwrec.readline())
+        rec10.insert(tk.INSERT, records[9])
         rec10.configure(state = 'disabled')
-        rec11.insert(tk.INSERT, fwrec.readline())
+        rec11.insert(tk.INSERT, records[10])
         rec11.configure(state = 'disabled')
-        rec12.insert(tk.INSERT, fwrec.readline())
+        rec12.insert(tk.INSERT, records[11])
         rec12.configure(state = 'disabled')
-        fwrec.close()
+        frrec.close()
     except:
         sys.stderr.write('cannot find record.cbtm.\n')
         messagebox.showerror(title = 'Exception', message = '파일 "record.cbtm" 을(를) 찾을 수 없습니다.')
         sys.exit()
+
+def calcAvg5():
+    global five_avgtxt
+    '''
+    최근 5회 기록의 평균을 측정하는 함수입니다.
+    WCA 규정대로 5회 중 가장 적게 걸린 시간과 가장 많이 걸린 시간을 제외한 뒤
+    남은 세 개의 기록으로 평균을 측정합니다(20% 절사평균).
+    '''
+    recentAvg5 = []
+    farec = open('record.cbtm', 'r')
+    cnt = 5
+    try:
+        for i in farec.readlines()[::-1]:
+            if cnt == 0:
+                break
+            if i == 'DNF':
+                recentAvg5.append(0.0)
+                continue
+            recentAvg5.append(float(i.rstrip()))
+            cnt -= 1
+        
+        if len(recentAvg5) < 5:
+            avg5 = 0
+        else:
+            mn = 1e20
+            for i in recentAvg5:
+                if i == 'DNF':
+                    continue
+                mn = min(mn, i)
+            mx = -1
+            for i in recentAvg5:
+                if i == 'DNF':
+                    continue
+                mx = max(mx, i)
+            
+            recentAvg5.pop(recentAvg5.index(mn))
+            recentAvg5.pop(recentAvg5.index(mx))
+            avg5 = sum(recentAvg5)/(3-recentAvg5.count('DNF'))
+        
+        five_avgtxt = tk.Label(mainWindow, font = ('나눔고딕', 12), text = '· 최근 5회 평균: '+'%.3lf'%avg5)
+        five_avgtxt.place(x = 85, y = 575)
+        farec.close()
+    except:
+        sys.stderr.write('There was an error while calculating recent 5 average.\n')
+        messagebox.showerror(title = 'Exception', message = '"record.cbtm" 을(를) 읽는 동안 문제가 발생했습니다.\n파일을 임의로 수정한 적이 있었는지 확인해보십시오.')
+        farec.close()
+        sys.exit()
+
+def calcAvg12():
+    global twelve_avgtxt
+    '''
+    최근 12회 기록의 평균을 측정하는 함수입니다.
+    최근 5회 기록의 평균 측정과는 다르게 산술평균을 사용합니다.
+    '''
+    recentAvg12 = []
+    farec = open('record.cbtm', 'r')
+    cnt = 12
+    try:
+        for i in farec.readlines()[::-1]:
+            if cnt == 0:
+                break
+            if i == 'DNF':
+                recentAvg12.append(0.0)
+                continue
+            recentAvg12.append(float(i.rstrip()))
+            cnt -= 1
+
+        if len(recentAvg12) < 12:
+            avg12 = 0
+        else:
+            avg12 = sum(recentAvg12)/(12-recentAvg12.count('DNF'))
+
+        twelve_avgtxt = tk.Label(mainWindow, font = ('나눔고딕', 12), text = '· 최근 12회 평균: '+'%.3lf'%avg12)
+        twelve_avgtxt.place(x = 85, y = 600)
+        farec.close()
+    except:
+        sys.stderr.write('There was an error while calculating recent 12 average.\n')
+        messagebox.showerror(title = 'Exception', message = '"record.cbtm" 을(를) 읽는 동안 문제가 발생했습니다.\n파일을 임의로 수정한 적이 있었는지 확인해보십시오.')
+        farec.close()
+        sys.exit()
+
+def best_score():
+    global best_scoretxt
+    all_record = []
+    farec = open('record.cbtm', 'r')
+    try:
+        for i in farec.readlines():
+            if i == 'DNF':
+                continue
+            all_record.append(float(i.rstrip()))
+        if len(all_record) == 0:
+            best = 0
+        else:
+            best = min(all_record)
+
+        best_scoretxt = tk.Label(mainWindow, font = ('나눔고딕', 12), text = '· 최고 기록: '+'%.3lf'%best)
+        best_scoretxt.place(x = 85, y = 625)
+        farec.close()
+            
+    except:
+        sys.stderr.write('There was an error while calculating best score.\n')
+        messagebox.showerror(title = 'Exception', message = '"record.cbtm" 을(를) 읽는 동안 문제가 발생했습니다.\n파일을 임의로 수정한 적이 있었는지 확인해보십시오.')
+        farec.close()
+        sys.exit()
+
+def del_record1():
+    try:
+        farec = open('record.cbtm', 'r')
+        all_record = [i.rstrip() for i in farec.readlines()]
+        if len(all_record) == 0:
+            return
+        all_record.pop()
+        farec.close()
+        fwrec = open('record.cbtm', 'w')
+        for i in all_record:
+            fwrec.write(i + '\n')
+        fwrec.close()
+        calcAvg5()
+        calcAvg12()
+        best_score()
+        load_record()
+    except:
+        sys.stderr.write('Cannot delete score.\n')
+        messagebox.showerror(title = 'Exception', message = '최근 1회 기록을 삭제할 수 없습니다.')
+        farec.close()
+        fwrec.close()
+
+def del_record12():
+    try:
+        farec = open('record.cbtm', 'r')
+        all_record = [i.rstrip() for i in farec.readlines()]
+        if len(all_record) <= 12:
+            del_recordall()
+            return
+        for i in range(12):
+            all_record.pop()
+        farec.close()
+        fwrec = open('record.cbtm', 'w')
+        for i in all_record:
+            fwrec.write(i + '\n')
+        fwrec.close()
+        calcAvg5()
+        calcAvg12()
+        best_score()
+        load_record()
+    except:
+        sys.stderr.write('Cannot delete score.\n')
+        messagebox.showerror(title = 'Exception', message = '최근 12회 기록을 삭제할 수 없습니다.')
+        farec.close()
+        fwrec.close()
+
+def del_recordall():
+    try:
+        farec = open('record.cbtm', 'w')
+        farec.close()
+        calcAvg5()
+        calcAvg12()
+        best_score()
+        load_record()
+    except:
+        sys.stderr.write('Cannot delete score.\n')
+        messagebox.showerror(title = 'Exception', message = '모든 기록 삭제를 수행할 수 없습니다.')
+        farec.close()
 
 
 
@@ -195,7 +371,7 @@ class Timer(tk.Frame):
     def __init__(self):
         global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time,\
             time_txt, logo_image,\
-                penalty_bt, help_bt
+                penalty_bt, penalty_bt_menu, help_bt
         
         mainWindow.title('CubeTimer ' + version)
         time_running = False
@@ -227,14 +403,29 @@ class Timer(tk.Frame):
         mainWindow.bind('<KeyRelease-space>', start)
         reset()
 
-        time_info = tk.Label(mainWindow, font = ('나눔고딕', 13), text = '시작하거나 멈추려면 Space키를 누르세요')
-        time_info.place(x = 85, y = 525)
+        time_info = tk.Label(mainWindow, font = ('나눔고딕', 14), text = '시작하거나 멈추려면 Space키를 누르세요')
+        time_info.place(x = 65, y = 525)
 
-        # etc
-        penalty_bt = tk.Button(mainWindow, font = ('나눔고딕', 12), text = '기록 수정하기')
-        penalty_bt.place(x = 50, y = 610, width = 150, height = 70)
+        # stat
+        calcAvg5()
+        calcAvg12()
+        best_score()
+
+        # button
+        penalty_bt = tk.Menubutton(mainWindow, font = ('나눔고딕', 12), text = '기록 수정하기', relief = 'raised', direction = 'below')
+        penalty_bt.place(x = 70, y = 700, width = 150, height = 70)
+        penalty_bt_menu = tk.Menu(penalty_bt, tearoff = 0)
+        penalty_bt_menu.add_command(label = '최근 기록 1회 삭제', command = del_record1)
+        penalty_bt_menu.add_command(label = '최근 기록 12회 삭제', command = del_record12)
+        penalty_bt_menu.add_command(label = '최근 기록 모두 삭제', command = del_recordall)
+        penalty_bt_menu.add_separator()
+        penalty_bt_menu.add_command(label = '최근 기록 1회 DNF 처리', command = comming_soon)
+        penalty_bt_menu.add_command(label = '최근 기록에 2초 Penalty 추가', command = comming_soon)
+        penalty_bt_menu.add_command(label = '최근 기록에 2초 Penalty 삭제', command = comming_soon)
+        penalty_bt["menu"] = penalty_bt_menu
+
         help_bt = tk.Button(mainWindow, font = ('나눔고딕', 12), text = '도움말', command = help_win)
-        help_bt.place(x = 50, y = 700, width = 150, height = 70)
+        help_bt.place(x = 240, y = 700, width = 150, height = 70)
  
         # ---Main UI setting end----------------------------
 
@@ -246,18 +437,23 @@ class Timer(tk.Frame):
         print(time_running)
 
 
-
 def help_win():
+    global help_txt1
     helpWindow = tk.Tk()
-    helpWindow.geometry("300x300")
+    helpWindow.geometry("400x600")
     helpWindow.resizable(width = False, height = False)
+    help_txt1 = tk.Label(helpWindow, font = ('나눔고딕', 12), text = '업데이트 예정입니다.')
+    help_txt1.place(x = 125, y = 200)
     helpWindow.mainloop()
+
+def comming_soon():
+    messagebox.showinfo(title = '알림', message = '업데이트 예정입니다.')
 
 
 
 if __name__ == "__main__":
     mainWindow = tk.Tk()
-    mainWindow.geometry("600x950")
+    mainWindow.geometry("600x900+100-100")
     mainWindow.resizable(width = False, height = False)
 
     pusher()
