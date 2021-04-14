@@ -8,15 +8,15 @@ import os, time, sys
 try:
     sys.path.append("./scr")
 except:
-    sys.stderr.write('cannot find /scr.\n')
+    sys.stderr.write('Error: cannot find /scr.\n')
 try:
     import genScramble
 except ModuleNotFoundError:
-    sys.stderr.write('cannot find genScramble.py.\n')
+    sys.stderr.write('Error: cannot find genScramble.py.\n')
 try:
     import showScrambleImg
 except ModuleNotFoundError:
-    sys.stderr.write('cannot find showScrambleImg.py.\n')
+    sys.stderr.write('Error: cannot find showScrambleImg.py.\n')
 
 # ---------------------------------------------------------------- #
 version = 'v0.1.0'
@@ -88,7 +88,7 @@ def scr_refresh(*_): # 스크램블 새로고침
         colorf9 = tk.Label(mainWindow, image = color9)
         colorf9.place(x = 520, y = 320)
     except:
-        sys.stderr.write('exception.\n')
+        sys.stderr.write('Error: scramble loading was failed.\n')
         messagebox.showerror(title = 'Exception', message = 'Scramble 을(를) 구성하는 도중 오류가 발생했습니다.')
         sys.exit()
     scramble_box.insert(tk.INSERT, scramble_lst)
@@ -198,7 +198,7 @@ def load_record(): # 최근 기록 표시
         rec12.configure(state = 'disabled')
         frrec.close()
     except:
-        sys.stderr.write('cannot find record.cbtm.\n')
+        sys.stderr.write('Error: cannot find record.cbtm.\n')
         messagebox.showerror(title = 'Exception', message = '파일 "record.cbtm" 을(를) 찾을 수 없습니다.')
         sys.exit()
 
@@ -244,7 +244,7 @@ def calcAvg5():
         five_avgtxt.place(x = 85, y = 575)
         farec.close()
     except:
-        sys.stderr.write('There was an error while calculating recent 5 average.\n')
+        sys.stderr.write('Error: There was an error while calculating recent 5 average.\n')
         messagebox.showerror(title = 'Exception', message = '"record.cbtm" 을(를) 읽는 동안 문제가 발생했습니다.\n파일을 임의로 수정한 적이 있었는지 확인해보십시오.')
         farec.close()
         sys.exit()
@@ -277,7 +277,7 @@ def calcAvg12():
         twelve_avgtxt.place(x = 85, y = 600)
         farec.close()
     except:
-        sys.stderr.write('There was an error while calculating recent 12 average.\n')
+        sys.stderr.write('Error: There was an error while calculating recent 12 average.\n')
         messagebox.showerror(title = 'Exception', message = '"record.cbtm" 을(를) 읽는 동안 문제가 발생했습니다.\n파일을 임의로 수정한 적이 있었는지 확인해보십시오.')
         farec.close()
         sys.exit()
@@ -301,7 +301,7 @@ def best_score():
         farec.close()
             
     except:
-        sys.stderr.write('There was an error while calculating best score.\n')
+        sys.stderr.write('Error: There was an error while calculating best score.\n')
         messagebox.showerror(title = 'Exception', message = '"record.cbtm" 을(를) 읽는 동안 문제가 발생했습니다.\n파일을 임의로 수정한 적이 있었는지 확인해보십시오.')
         farec.close()
         sys.exit()
@@ -323,7 +323,7 @@ def del_record1():
         best_score()
         load_record()
     except:
-        sys.stderr.write('Cannot delete score.\n')
+        sys.stderr.write('Error: Cannot delete score.\n')
         messagebox.showerror(title = 'Exception', message = '최근 1회 기록을 삭제할 수 없습니다.')
         farec.close()
         fwrec.close()
@@ -347,7 +347,7 @@ def del_record12():
         best_score()
         load_record()
     except:
-        sys.stderr.write('Cannot delete score.\n')
+        sys.stderr.write('Error: Cannot delete score.\n')
         messagebox.showerror(title = 'Exception', message = '최근 12회 기록을 삭제할 수 없습니다.')
         farec.close()
         fwrec.close()
@@ -361,7 +361,7 @@ def del_recordall():
         best_score()
         load_record()
     except:
-        sys.stderr.write('Cannot delete score.\n')
+        sys.stderr.write('Error: Cannot delete score.\n')
         messagebox.showerror(title = 'Exception', message = '모든 기록 삭제를 수행할 수 없습니다.')
         farec.close()
 
@@ -387,7 +387,7 @@ class Timer(tk.Frame):
             logo_show = tk.Label(mainWindow, image = logo_image)
             logo_show.place(x = 20, y = 20)
         except tk.TclError:
-            sys.stderr.write('cannot find "Cube_Timer_logo.gif".\n')
+            sys.stderr.write('Error: cannot find "Cube_Timer_logo.gif".\n')
             messagebox.showerror(title = 'Exception', message = '파일 "Cube_Timer_logo.gif" 을(를) 찾을 수 없습니다.')
             sys.exit()
 
