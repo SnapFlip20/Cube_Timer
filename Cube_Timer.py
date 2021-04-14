@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.1.0 --------- by SnapFlip20
+# Cube_Timer v0.1.1 --------- by SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox
@@ -19,7 +19,7 @@ except ModuleNotFoundError:
     sys.stderr.write('Error: cannot find showScrambleImg.py.\n')
 
 # ---------------------------------------------------------------- #
-version = 'v0.1.0'
+version = 'v0.1.1'
 # ---------------------------------------------------------------- #
 def pusher(): # batch file generator for Github push
     fbat = open('push.bat', 'w')
@@ -36,7 +36,8 @@ def pusher(): # batch file generator for Github push
 # ---------------------------------------------------------------- #
 
 def run():
-    global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time
+    global time_running, start_time, stop_time, previous_time, elapsed_time
+
     if time_running:
         mainWindow.bind('<KeyRelease-space>', pause)
         now_time = time.time()
@@ -44,7 +45,7 @@ def run():
         elapsed_time = time_dif + previous_time
         time_txt.configure(text = '{:7.3f}'.format(elapsed_time))
     
-    mainWindow.after(10, run)
+    mainWindow.after(1, run)
 
 def scr_refresh(*_): # 스크램블 새로고침
     global scramble_info, scramble_box, scramble_lst,\
@@ -91,6 +92,7 @@ def scr_refresh(*_): # 스크램블 새로고침
         sys.stderr.write('Error: scramble loading was failed.\n')
         messagebox.showerror(title = 'Exception', message = 'Scramble 을(를) 구성하는 도중 오류가 발생했습니다.')
         sys.exit()
+    
     scramble_box.insert(tk.INSERT, scramble_lst)
     scramble_box.configure(state = 'disabled') # 스크램블 박스에 텍스트를 입력할 수 없게 변경
 
@@ -101,6 +103,7 @@ def scr_refresh(*_): # 스크램블 새로고침
 
 def start(*_): # 타이머 시작
     global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
+
     if not time_running:
         time_running = True
         start_time = time.time()
@@ -108,6 +111,7 @@ def start(*_): # 타이머 시작
 
 def pause(*_): # 타이머 정지
     global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
+
     scr_refresh()
     record(str(round(elapsed_time, 3)))
     calcAvg5()
@@ -120,6 +124,7 @@ def pause(*_): # 타이머 정지
 
 def reset(*_): # 타이머 리셋
     global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
+
     mainWindow.bind('<KeyRelease-space>', start)
     time_running = False
     elapsed_time = 0.0
@@ -134,8 +139,10 @@ def record(t): # 측정된 기록을 record.cbtm 파일에 작성
 def load_record(): # 최근 기록 표시
     global record_info1,\
         rec1, rec2, rec3, rec4, rec5, rec6, rec7, rec8, rec9, rec10, rec11, rec12
+    
     record_info1 = tk.Label(mainWindow, font = ('나눔고딕 bold', 14), text = '-최근 기록-')
     record_info1.place(x = 448, y = 410)
+
     rec1 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
     rec1.place(x = 435, y = 450, width = 125, height = 30)
     rec2 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
@@ -203,12 +210,13 @@ def load_record(): # 최근 기록 표시
         sys.exit()
 
 def calcAvg5():
-    global five_avgtxt
     '''
     최근 5회 기록의 평균을 측정하는 함수입니다.
     WCA 규정대로 5회 중 가장 적게 걸린 시간과 가장 많이 걸린 시간을 제외한 뒤
     남은 세 개의 기록으로 평균을 측정합니다(20% 절사평균).
     '''
+    global five_avgtxt
+
     recentAvg5 = []
     farec = open('record.cbtm', 'r')
     cnt = 5
@@ -250,11 +258,12 @@ def calcAvg5():
         sys.exit()
 
 def calcAvg12():
-    global twelve_avgtxt
     '''
     최근 12회 기록의 평균을 측정하는 함수입니다.
     최근 5회 기록의 평균 측정과는 다르게 산술평균을 사용합니다.
     '''
+    global twelve_avgtxt
+    
     recentAvg12 = []
     farec = open('record.cbtm', 'r')
     cnt = 12
@@ -284,6 +293,7 @@ def calcAvg12():
 
 def best_score():
     global best_scoretxt
+
     all_record = []
     farec = open('record.cbtm', 'r')
     try:
@@ -314,10 +324,12 @@ def del_record1():
             return
         all_record.pop()
         farec.close()
+
         fwrec = open('record.cbtm', 'w')
         for i in all_record:
             fwrec.write(i + '\n')
         fwrec.close()
+
         calcAvg5()
         calcAvg12()
         best_score()
@@ -338,10 +350,12 @@ def del_record12():
         for i in range(12):
             all_record.pop()
         farec.close()
+
         fwrec = open('record.cbtm', 'w')
         for i in all_record:
             fwrec.write(i + '\n')
         fwrec.close()
+
         calcAvg5()
         calcAvg12()
         best_score()
@@ -356,6 +370,7 @@ def del_recordall():
     try:
         farec = open('record.cbtm', 'w')
         farec.close()
+
         calcAvg5()
         calcAvg12()
         best_score()
@@ -367,7 +382,7 @@ def del_recordall():
 
 
 
-class Timer(tk.Frame):
+class Timer(tk.Frame): # 메인 윈도우 구성
     def __init__(self):
         global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time,\
             time_txt, logo_image,\
@@ -380,7 +395,7 @@ class Timer(tk.Frame):
         previous_time = 0.0
         elapsed_time = 0.0
 
-        # ---Main UI setting start----------------------------
+        # ---Main UI setting start-----------------------------------------------
         # logo image
         try:
             logo_image = tk.PhotoImage(file = "Cube_Timer_logo.gif")
@@ -426,8 +441,7 @@ class Timer(tk.Frame):
 
         help_bt = tk.Button(mainWindow, font = ('나눔고딕', 12), text = '도움말', command = help_win)
         help_bt.place(x = 240, y = 700, width = 150, height = 70)
- 
-        # ---Main UI setting end----------------------------
+        # ---Main UI setting end-----------------------------------------------
 
         sys.stdout.write('Timer.__init__() is executed.\n')
 
@@ -435,6 +449,7 @@ class Timer(tk.Frame):
         global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
         print('이 문장이 출력이 되나요?')
         print(time_running)
+
 
 
 def help_win():
