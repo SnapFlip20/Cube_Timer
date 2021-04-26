@@ -114,10 +114,7 @@ def pause(*_): # 타이머 정지
 
     scr_refresh()
     record(str(round(elapsed_time, 3)))
-    calcAvg5()
-    calcAvg12()
-    best_score()
-    load_record()
+    bundle1()
     mainWindow.bind('<KeyRelease-space>', start)
     time_running = False
     previous_time = elapsed_time = 0.0
@@ -330,10 +327,7 @@ def del_record1():
             fwrec.write(i + '\n')
         fwrec.close()
 
-        calcAvg5()
-        calcAvg12()
-        best_score()
-        load_record()
+        bundle1()
     except:
         sys.stderr.write('Error: Cannot delete score.\n')
         messagebox.showerror(title = 'Exception', message = '최근 1회 기록을 삭제할 수 없습니다.')
@@ -356,10 +350,7 @@ def del_record12():
             fwrec.write(i + '\n')
         fwrec.close()
 
-        calcAvg5()
-        calcAvg12()
-        best_score()
-        load_record()
+        bundle1()
     except:
         sys.stderr.write('Error: Cannot delete score.\n')
         messagebox.showerror(title = 'Exception', message = '최근 12회 기록을 삭제할 수 없습니다.')
@@ -371,14 +362,17 @@ def del_recordall():
         farec = open('record.cbtm', 'w')
         farec.close()
 
-        calcAvg5()
-        calcAvg12()
-        best_score()
-        load_record()
+        bundle1()
     except:
         sys.stderr.write('Error: Cannot delete score.\n')
         messagebox.showerror(title = 'Exception', message = '모든 기록 삭제를 수행할 수 없습니다.')
         farec.close()
+
+def bundle1():
+    calcAvg5()
+    calcAvg12()
+    best_score()
+    load_record()
 
 
 
@@ -422,9 +416,7 @@ class Timer(tk.Frame): # 메인 윈도우 구성
         time_info.place(x = 65, y = 525)
 
         # stat
-        calcAvg5()
-        calcAvg12()
-        best_score()
+        bundle1()
 
         # button
         penalty_bt = tk.Menubutton(mainWindow, font = ('나눔고딕', 12), text = '기록 수정하기', relief = 'raised', direction = 'below')
