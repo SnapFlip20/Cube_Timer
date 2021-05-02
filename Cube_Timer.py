@@ -165,7 +165,6 @@ def load_record(): # 최근 기록 표시
     rec12 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
     rec12.place(x = 435, y = 780, width = 125, height = 30)
 
-    # load recent records
     try:
         records = []
         frrec = open('record.cbtm', 'r')
@@ -368,7 +367,7 @@ def del_recordall():
         messagebox.showerror(title = 'Exception', message = '모든 기록 삭제를 수행할 수 없습니다.')
         farec.close()
 
-def bundle1():
+def bundle1(): # 기록 새로고침 관련 함수 모음
     calcAvg5()
     calcAvg12()
     best_score()
