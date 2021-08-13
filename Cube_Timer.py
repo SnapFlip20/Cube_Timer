@@ -1,9 +1,9 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.1.1 --------- by SnapFlip20
+# Cube_Timer v0.1.2 --------- by SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox
-import os, time, sys
+import datetime, os, time, sys
 
 try:
     sys.path.append("./scr")
@@ -19,7 +19,7 @@ except ModuleNotFoundError:
     sys.stderr.write('Error: cannot find showScrambleImg.py.\n')
 
 # ---------------------------------------------------------------- #
-version = 'v0.1.1'
+version = 'v0.1.2'
 # ---------------------------------------------------------------- #
 def pusher(): # batch file generator for Github push
     fbat = open('push.bat', 'w')
@@ -205,14 +205,7 @@ def load_record(): # 최근 기록 표시
         messagebox.showerror(title = 'Exception', message = '파일 "record.cbtm" 을(를) 찾을 수 없습니다.')
         sys.exit()
 
-def calcAvg5():
-    '''
-    최근 5회 기록의 평균을 측정하는 함수입니다.
-    WCA 규정대로 5회 중 가장 적게 걸린 시간과 가장 많이 걸린 시간을 제외한 뒤
-    남은 세 개의 기록으로 평균을 측정합니다(20% 절사평균).
-    '''
-    global five_avgtxt
-
+def calc5():
     recentAvg5 = []
     farec = open('record.cbtm', 'r')
     cnt = 5
@@ -244,20 +237,27 @@ def calcAvg5():
             recentAvg5.pop(recentAvg5.index(mx))
             avg5 = sum(recentAvg5)/(3-recentAvg5.count('DNF'))
         
-        five_avgtxt = tk.Label(mainWindow, font = ('나눔고딕', 12), text = '· 최근 5회 평균: '+'%.3lf'%avg5)
-        five_avgtxt.place(x = 85, y = 575)
         farec.close()
+        return avg5
     except:
         sys.stderr.write('Error: There was an error while calculating recent 5 average.\n')
         messagebox.showerror(title = 'Exception', message = '"record.cbtm" 을(를) 읽는 동안 문제가 발생했습니다.\n파일을 임의로 수정한 적이 있었는지 확인해보십시오.')
         farec.close()
         sys.exit()
 
-def calcAvg12():
+def calcAvg5():
     '''
-    최근 12회 기록의 평균을 측정하는 함수입니다.
-    최근 5회 기록의 평균 측정과는 다르게 산술평균을 사용합니다.
+    최근 5회 기록의 평균을 측정하는 함수입니다.
+    WCA 규정대로 5회 중 가장 적게 걸린 시간과 가장 많이 걸린 시간을 제외한 뒤
+    남은 세 개의 기록으로 평균을 측정합니다(20% 절사평균).
     '''
+    global five_avgtxt
+
+    avg5 = calc5()
+    five_avgtxt = tk.Label(mainWindow, font = ('나눔고딕', 12), text = '· 최근 5회 평균: '+'%.3lf'%avg5)
+    five_avgtxt.place(x = 85, y = 575)
+
+def calc12():
     global twelve_avgtxt
     
     recentAvg12 = []
@@ -278,14 +278,25 @@ def calcAvg12():
         else:
             avg12 = sum(recentAvg12)/(12-recentAvg12.count('DNF'))
 
-        twelve_avgtxt = tk.Label(mainWindow, font = ('나눔고딕', 12), text = '· 최근 12회 평균: '+'%.3lf'%avg12)
-        twelve_avgtxt.place(x = 85, y = 600)
         farec.close()
+        return avg12
     except:
         sys.stderr.write('Error: There was an error while calculating recent 12 average.\n')
         messagebox.showerror(title = 'Exception', message = '"record.cbtm" 을(를) 읽는 동안 문제가 발생했습니다.\n파일을 임의로 수정한 적이 있었는지 확인해보십시오.')
         farec.close()
         sys.exit()
+
+def calcAvg12():
+    '''
+    최근 12회 기록의 평균을 측정하는 함수입니다.
+    최근 5회 기록의 평균 측정과는 다르게 산술평균을 사용합니다.
+    '''
+    global twelve_avgtxt
+    
+    avg12 = calc12()
+
+    twelve_avgtxt = tk.Label(mainWindow, font = ('나눔고딕', 12), text = '· 최근 12회 평균: '+'%.3lf'%avg12)
+    twelve_avgtxt.place(x = 85, y = 600)
 
 def best_score():
     global best_scoretxt
@@ -367,6 +378,31 @@ def del_recordall():
         messagebox.showerror(title = 'Exception', message = '모든 기록 삭제를 수행할 수 없습니다.')
         farec.close()
 
+def record_to_txt():
+    farec = open('record.cbtm', 'r')
+    allRecent = []
+    for i in farec.readlines():
+        if i == 'DNF':
+            allRecent.append(0.0)
+            continue
+        allRecent.append(float(i.rstrip()))
+    
+    fwrec = open('record_{}.txt'.format(datetime.datetime.now().strftime('%Y%m%d_%H%M%S')), 'w')
+    fwrec.write('\n')
+    fwrec.write('======== Cube_Timer record ========\n')
+    fwrec.write('파일 저장 시각: {}\n'.format(datetime.datetime.now().strftime('%Y.%m.%d %H:%M:%S')))
+    fwrec.write('===============================\n')
+    fwrec.write('\n')
+    for idx, r in enumerate(allRecent):
+        fwrec.write(f'{idx+1}. {r}\n')
+    fwrec.write('\n')
+    fwrec.write('===============================\n')
+    fwrec.write('\n')
+    fwrec.write(f'최근 5회 평균: {"%.3lf"%calc5()}\n')
+    fwrec.write(f'최근 12회 평균: {"%.3lf"%calc12()}\n')
+    fwrec.write(f'최고기록: {"%.3lf"%min(allRecent)}\n')
+    fwrec.write('\n')
+
 def bundle1(): # 기록 새로고침 관련 함수 모음
     calcAvg5()
     calcAvg12()
@@ -379,7 +415,7 @@ class Timer(tk.Frame): # 메인 윈도우 구성
     def __init__(self):
         global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time,\
             time_txt, logo_image,\
-                penalty_bt, penalty_bt_menu, help_bt
+                penalty_bt, penalty_bt_menu, help_bt, recordtxt_bt
         
         mainWindow.title('CubeTimer ' + version)
         time_running = False
@@ -432,6 +468,9 @@ class Timer(tk.Frame): # 메인 윈도우 구성
 
         help_bt = tk.Button(mainWindow, font = ('나눔고딕', 12), text = '도움말', command = help_win)
         help_bt.place(x = 240, y = 700, width = 150, height = 70)
+
+        recordtxt_bt = tk.Button(mainWindow, font = ('나눔고딕', 11), text = '텍스트 파일로 저장', command = record_to_txt)
+        recordtxt_bt.place(x = 427, y = 825, width = 140, height = 30)
         # ---Main UI setting end-----------------------------------------------
 
         sys.stdout.write('Timer.__init__() is executed.\n')
