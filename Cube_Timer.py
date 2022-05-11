@@ -52,10 +52,10 @@ def scr_refresh(*_): # 스크램블 새로고침
         color1, color2, color3, color4, color5, color6, color7, color8, color9,\
             scr_help1, scr_help2
     
-    scramble_info = tk.Label(mainWindow, font = ('나눔고딕', 20), text = 'Scramble')
+    scramble_info = tk.Label(mainWindow, font = ('맑은 고딕', 20), text = 'Scramble')
     scramble_info.place(x = 50, y = 200)
 
-    scramble_box = tk.Text(mainWindow, font = ('나눔고딕 bold', 15), wrap = 'word', state = 'normal', width = 10)
+    scramble_box = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal', width = 10)
     scramble_box.place(x = 50, y = 250, width = 350, height = 100)
 
     try:
@@ -96,10 +96,10 @@ def scr_refresh(*_): # 스크램블 새로고침
     scramble_box.insert(tk.INSERT, scramble_lst)
     scramble_box.configure(state = 'disabled') # 스크램블 박스에 텍스트를 입력할 수 없게 변경
 
-    scr_help1 = tk.Label(mainWindow, font = ('나눔고딕', 11), text = '윗면이 흰색, 앞면이 초록색인\n상태에서 큐브를 섞어주세요.')
-    scr_help1.place(x = 403, y = 185)
-    scr_help2 = tk.Label(mainWindow, font = ('나눔고딕', 10), text = '앞면(초록색)')
-    scr_help2.place(x = 460, y = 360)
+    scr_help1 = tk.Label(mainWindow, font = ('맑은 고딕', 10), text = '윗면이 흰색, 앞면이 초록색인\n상태에서 큐브를 섞어주세요.')
+    scr_help1.place(x = 405, y = 185)
+    scr_help2 = tk.Label(mainWindow, font = ('맑은 고딕', 10), text = '앞면(초록색)')
+    scr_help2.place(x = 457, y = 360)
 
 def start(*_): # 타이머 시작
     global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
@@ -137,32 +137,32 @@ def load_record(): # 최근 기록 표시
     global record_info1,\
         rec1, rec2, rec3, rec4, rec5, rec6, rec7, rec8, rec9, rec10, rec11, rec12
     
-    record_info1 = tk.Label(mainWindow, font = ('나눔고딕 bold', 14), text = '-최근 기록-')
+    record_info1 = tk.Label(mainWindow, font = ('맑은 고딕 bold', 14), text = '-최근 기록-')
     record_info1.place(x = 448, y = 410)
 
-    rec1 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec1 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
     rec1.place(x = 435, y = 450, width = 125, height = 30)
-    rec2 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec2 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
     rec2.place(x = 435, y = 480, width = 125, height = 30)
-    rec3 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec3 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
     rec3.place(x = 435, y = 510, width = 125, height = 30)
-    rec4 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec4 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
     rec4.place(x = 435, y = 540, width = 125, height = 30)
-    rec5 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec5 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
     rec5.place(x = 435, y = 570, width = 125, height = 30)
-    rec6 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec6 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
     rec6.place(x = 435, y = 600, width = 125, height = 30)
-    rec7 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec7 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
     rec7.place(x = 435, y = 630, width = 125, height = 30)
-    rec8 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec8 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
     rec8.place(x = 435, y = 660, width = 125, height = 30)
-    rec9 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec9 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
     rec9.place(x = 435, y = 690, width = 125, height = 30)
-    rec10 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec10 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
     rec10.place(x = 435, y = 720, width = 125, height = 30)
-    rec11 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec11 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
     rec11.place(x = 435, y = 750, width = 125, height = 30)
-    rec12 = tk.Text(mainWindow, font = ('나눔고딕', 15), wrap = 'word', state = 'normal')
+    rec12 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
     rec12.place(x = 435, y = 780, width = 125, height = 30)
 
     try:
@@ -249,12 +249,12 @@ def calcAvg5():
     '''
     최근 5회 기록의 평균을 측정하는 함수입니다.
     WCA 규정대로 5회 중 가장 적게 걸린 시간과 가장 많이 걸린 시간을 제외한 뒤
-    남은 세 개의 기록으로 평균을 측정합니다(20% 절사평균).
+    남은 세 개의 기록으로 평균을 측정합니다.
     '''
     global five_avgtxt
 
     avg5 = calc5()
-    five_avgtxt = tk.Label(mainWindow, font = ('나눔고딕', 12), text = '· 최근 5회 평균: '+'%.3lf'%avg5)
+    five_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 5회 평균: '+'%.3lf'%avg5)
     five_avgtxt.place(x = 85, y = 575)
 
 def calc12():
@@ -295,7 +295,7 @@ def calcAvg12():
     
     avg12 = calc12()
 
-    twelve_avgtxt = tk.Label(mainWindow, font = ('나눔고딕', 12), text = '· 최근 12회 평균: '+'%.3lf'%avg12)
+    twelve_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 12회 평균: '+'%.3lf'%avg12)
     twelve_avgtxt.place(x = 85, y = 600)
 
 def best_score():
@@ -313,7 +313,7 @@ def best_score():
         else:
             best = min(all_record)
 
-        best_scoretxt = tk.Label(mainWindow, font = ('나눔고딕', 12), text = '· 최고 기록: '+'%.3lf'%best)
+        best_scoretxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최고 기록: '+'%.3lf'%best)
         best_scoretxt.place(x = 85, y = 625)
         farec.close()
             
@@ -436,7 +436,7 @@ class Timer(tk.Frame): # 메인 윈도우 구성
             sys.exit()
 
         # scramble
-        scr_refresh_bt = tk.Button(mainWindow, font = ('나눔고딕', 12), text = '새로고침', command = scr_refresh)
+        scr_refresh_bt = tk.Button(mainWindow, font = ('맑은 고딕', 12), text = '새로고침', command = scr_refresh)
         scr_refresh_bt.place(x = 300, y = 200, width = 90, height = 40)
         if not time_running:
             scr_refresh()
@@ -447,14 +447,14 @@ class Timer(tk.Frame): # 메인 윈도우 구성
         mainWindow.bind('<KeyRelease-space>', start)
         reset()
 
-        time_info = tk.Label(mainWindow, font = ('나눔고딕', 14), text = '시작하거나 멈추려면 Space키를 누르세요')
-        time_info.place(x = 65, y = 525)
+        time_info = tk.Label(mainWindow, font = ('맑은 고딕', 14), text = '시작하거나 멈추려면 Space키를 누르세요.')
+        time_info.place(x = 51, y = 525)
 
         # stat
         bundle1()
 
         # button
-        penalty_bt = tk.Menubutton(mainWindow, font = ('나눔고딕', 12), text = '기록 수정하기', relief = 'raised', direction = 'below')
+        penalty_bt = tk.Menubutton(mainWindow, font = ('맑은 고딕', 12), text = '기록 수정하기', relief = 'raised', direction = 'below')
         penalty_bt.place(x = 70, y = 700, width = 150, height = 70)
         penalty_bt_menu = tk.Menu(penalty_bt, tearoff = 0)
         penalty_bt_menu.add_command(label = '최근 기록 1회 삭제', command = del_record1)
@@ -466,10 +466,10 @@ class Timer(tk.Frame): # 메인 윈도우 구성
         penalty_bt_menu.add_command(label = '최근 기록에 2초 Penalty 삭제', command = comming_soon)
         penalty_bt["menu"] = penalty_bt_menu
 
-        help_bt = tk.Button(mainWindow, font = ('나눔고딕', 12), text = '도움말', command = help_win)
+        help_bt = tk.Button(mainWindow, font = ('맑은 고딕', 12), text = '도움말', command = help_win)
         help_bt.place(x = 240, y = 700, width = 150, height = 70)
 
-        recordtxt_bt = tk.Button(mainWindow, font = ('나눔고딕', 11), text = '텍스트 파일로 저장', command = record_to_txt)
+        recordtxt_bt = tk.Button(mainWindow, font = ('맑은 고딕', 11), text = '텍스트 파일로 저장', command = record_to_txt)
         recordtxt_bt.place(x = 427, y = 825, width = 140, height = 30)
         # ---Main UI setting end-----------------------------------------------
 
@@ -487,7 +487,7 @@ def help_win():
     helpWindow = tk.Tk()
     helpWindow.geometry("400x600")
     helpWindow.resizable(width = False, height = False)
-    help_txt1 = tk.Label(helpWindow, font = ('나눔고딕', 12), text = '업데이트 예정입니다.')
+    help_txt1 = tk.Label(helpWindow, font = ('맑은 고딕', 12), text = '업데이트 예정입니다.')
     help_txt1.place(x = 125, y = 200)
     helpWindow.mainloop()
 

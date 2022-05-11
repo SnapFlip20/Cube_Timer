@@ -1,5 +1,4 @@
 #-*- coding:utf-8 -*-
-# code reference from https://www.acmicpc.net/source/24489351 (my code ^_^)
 
 dd = {'w':'white', 'y':'yellow', 'r':'red', 'o':'orange', 'g':'green', 'b':'blue'}
 
