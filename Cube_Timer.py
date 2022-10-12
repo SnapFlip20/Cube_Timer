@@ -1,9 +1,9 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.1.2 --------- by SnapFlip20
+# Cube_Timer v0.1.3 --------- by SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox
-import datetime, os, time, sys
+import datetime, os, time, statistics, sys
 
 try:
     sys.path.append("./scr")
@@ -19,7 +19,7 @@ except ModuleNotFoundError:
     sys.stderr.write('Error: cannot find showScrambleImg.py.\n')
 
 # ---------------------------------------------------------------- #
-version = 'v0.1.2'
+version = 'v0.1.3'
 # ---------------------------------------------------------------- #
 def pusher(): # batch file generator for Github push
     fbat = open('push.bat', 'w')
@@ -206,37 +206,23 @@ def load_record(): # 최근 기록 표시
         sys.exit()
 
 def calc5():
+    '''
+    최근 5회 기록의 평균을 측정하는 함수입니다.
+    5회 기록 중 최고 기록과 최저 기록을 제외한
+    3개의 기록으로 평균을 측정합니다.
+    '''
     recentAvg5 = []
     farec = open('record.cbtm', 'r')
-    cnt = 5
     try:
-        for i in farec.readlines()[::-1]:
-            if cnt == 0:
-                break
-            if i == 'DNF':
-                recentAvg5.append(0.0)
-                continue
-            recentAvg5.append(float(i.rstrip()))
-            cnt -= 1
-        
-        if len(recentAvg5) < 5:
-            avg5 = 0
+        recentAvg5 = list(map(float, farec.readlines()[::-1][:5]))
+        if recentAvg5.count(0) > 1:
+            avg5 = 'DNF'
         else:
-            mn = 1e20
-            for i in recentAvg5:
-                if i == 'DNF':
-                    continue
-                mn = min(mn, i)
-            mx = -1
-            for i in recentAvg5:
-                if i == 'DNF':
-                    continue
-                mx = max(mx, i)
-            
-            recentAvg5.pop(recentAvg5.index(mn))
-            recentAvg5.pop(recentAvg5.index(mx))
-            avg5 = sum(recentAvg5)/(3-recentAvg5.count('DNF'))
-        
+            if len(recentAvg5) < 5:
+                avg5 = 0
+            else:
+                recentAvg5.sort()
+                avg5 = statistics.mean(recentAvg5[1:-1])
         farec.close()
         return avg5
     except:
@@ -246,38 +232,29 @@ def calc5():
         sys.exit()
 
 def calcAvg5():
-    '''
-    최근 5회 기록의 평균을 측정하는 함수입니다.
-    WCA 규정대로 5회 중 가장 적게 걸린 시간과 가장 많이 걸린 시간을 제외한 뒤
-    남은 세 개의 기록으로 평균을 측정합니다.
-    '''
     global five_avgtxt
-
     avg5 = calc5()
     five_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 5회 평균: '+'%.3lf'%avg5)
     five_avgtxt.place(x = 85, y = 575)
 
 def calc12():
-    global twelve_avgtxt
-    
+    '''
+    최근 12회 기록의 평균을 측정하는 함수입니다.
+    12회 기록 중 최고 기록과 최저 기록을 제외한
+    10개의 기록으로 평균을 측정합니다.
+    '''
     recentAvg12 = []
     farec = open('record.cbtm', 'r')
-    cnt = 12
     try:
-        for i in farec.readlines()[::-1]:
-            if cnt == 0:
-                break
-            if i == 'DNF':
-                recentAvg12.append(0.0)
-                continue
-            recentAvg12.append(float(i.rstrip()))
-            cnt -= 1
-
-        if len(recentAvg12) < 12:
-            avg12 = 0
+        recentAvg12 = list(map(float, farec.readlines()[::-1][:12]))
+        if recentAvg12.count(0) > 1:
+            avg12 = 'DNF'
         else:
-            avg12 = sum(recentAvg12)/(12-recentAvg12.count('DNF'))
-
+            if len(recentAvg12) < 12:
+                avg12 = 0
+            else:
+                recentAvg12.sort()
+                avg12 = statistics.mean(recentAvg12[1:-1])
         farec.close()
         return avg12
     except:
@@ -287,34 +264,54 @@ def calc12():
         sys.exit()
 
 def calcAvg12():
-    '''
-    최근 12회 기록의 평균을 측정하는 함수입니다.
-    최근 5회 기록의 평균 측정과는 다르게 산술평균을 사용합니다.
-    '''
     global twelve_avgtxt
-    
     avg12 = calc12()
-
     twelve_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 12회 평균: '+'%.3lf'%avg12)
     twelve_avgtxt.place(x = 85, y = 600)
 
-def best_score():
-    global best_scoretxt
-
+def calcAvgall():
+    global all_avgtxt
     all_record = []
     farec = open('record.cbtm', 'r')
     try:
-        for i in farec.readlines():
-            if i == 'DNF':
-                continue
-            all_record.append(float(i.rstrip()))
-        if len(all_record) == 0:
-            best = 0
+        all_record = list(map(float, farec.readlines()))
+        if all_record.count(0) > 1:
+            avgall = 'DNF'
         else:
-            best = min(all_record)
+            if len(all_record) == 0:
+                avgall = 0
+            else:
+                avgall = statistics.mean(all_record)
+        farec.close()
 
+        all_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 전체 평균: '+'%.3lf'%avgall)
+        all_avgtxt.place(x = 85, y = 625)
+    except:
+        sys.stderr.write('Error: There was an error while calculating all avreage.\n')
+        messagebox.showerror(title = 'Exception', message = '"record.cbtm" 을(를) 읽는 동안 문제가 발생했습니다.\n파일을 임의로 수정한 적이 있었는지 확인해보십시오.')
+        farec.close()
+        sys.exit()
+
+def best_score():
+    global best_scoretxt
+    all_record = []
+    farec = open('record.cbtm', 'r')
+    try:
+        all_record = []
+        farec = open('record.cbtm', 'r')
+        all_record = list(map(float, farec.readlines()))
+        if all_record.count(0) > 1:
+            best = 'DNF'
+        else:
+            if len(all_record) == 0:
+                best = 0
+            elif len(all_record) == 1:
+                best = all_record[0]
+            else:
+                all_record.sort()
+                best = all_record[1] if all_record[0] == 0 else all_record[0]
         best_scoretxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최고 기록: '+'%.3lf'%best)
-        best_scoretxt.place(x = 85, y = 625)
+        best_scoretxt.place(x = 85, y = 650)
         farec.close()
             
     except:
@@ -371,7 +368,6 @@ def del_recordall():
     try:
         farec = open('record.cbtm', 'w')
         farec.close()
-
         bundle1()
     except:
         sys.stderr.write('Error: Cannot delete score.\n')
@@ -379,6 +375,8 @@ def del_recordall():
         farec.close()
 
 def record_to_txt():
+    comming_soon()
+    '''
     farec = open('record.cbtm', 'r')
     allRecent = []
     for i in farec.readlines():
@@ -400,12 +398,14 @@ def record_to_txt():
     fwrec.write('\n')
     fwrec.write(f'최근 5회 평균: {"%.3lf"%calc5()}\n')
     fwrec.write(f'최근 12회 평균: {"%.3lf"%calc12()}\n')
-    fwrec.write(f'최고기록: {"%.3lf"%min(allRecent)}\n')
+    fwrec.write(f'전체 평균: {"%.3lf"%min(allRecent)}\n')
     fwrec.write('\n')
+    '''
 
 def bundle1(): # 기록 새로고침 관련 함수 모음
     calcAvg5()
     calcAvg12()
+    calcAvgall()
     best_score()
     load_record()
 
