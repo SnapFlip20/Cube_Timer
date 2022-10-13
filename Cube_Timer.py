@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.1.3 --------- by SnapFlip20
+# Cube_Timer v0.1.4 --------- by SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox
@@ -19,8 +19,8 @@ except ModuleNotFoundError:
     sys.stderr.write('Error: cannot find showScrambleImg.py.\n')
 
 # ---------------------------------------------------------------- #
-version = 'v0.1.3'
-# ---------------------------------------------------------------- #
+version = 'v0.1.4'
+# -push.bat------------------------------------------------------- #
 def pusher(): # batch file generator for Github push
     fbat = open('push.bat', 'w')
     fbat.write('@echo off\n')
@@ -35,6 +35,8 @@ def pusher(): # batch file generator for Github push
     fbat.close()
 # ---------------------------------------------------------------- #
 
+
+
 def run():
     global time_running, start_time, stop_time, previous_time, elapsed_time
 
@@ -47,14 +49,19 @@ def run():
     
     mainWindow.after(1, run)
 
-def scr_refresh(*_): # 스크램블 새로고침
+
+
+def scr_refresh(*_):
+    '''
+    genScramble.py에서 랜덤으로 생성된 스크램블을 텍스트로 출력하고,
+    스크램블 후 윗면의 모습을 이미지로 표시합니다.
+    '''
     global scramble_info, scramble_box, scramble_lst,\
         color1, color2, color3, color4, color5, color6, color7, color8, color9,\
             scr_help1, scr_help2
     
     scramble_info = tk.Label(mainWindow, font = ('맑은 고딕', 20), text = 'Scramble')
     scramble_info.place(x = 50, y = 200)
-
     scramble_box = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal', width = 10)
     scramble_box.place(x = 50, y = 250, width = 350, height = 100)
 
@@ -133,7 +140,10 @@ def record(t): # 측정된 기록을 record.cbtm 파일에 작성
     farec.write(t + '\n')
     farec.close()
 
-def load_record(): # 최근 기록 표시
+def load_record():
+    '''
+    최근 측정한 12회 기록을 측정 시기가 빠른 기록 순으로 표시합니다.
+    '''
     global record_info1,\
         rec1, rec2, rec3, rec4, rec5, rec6, rec7, rec8, rec9, rec10, rec11, rec12
     
@@ -175,6 +185,9 @@ def load_record(): # 최근 기록 표시
             for i in range(12-len(records)):
                 records.append('')
         
+        for (i, j) in enumerate(records):
+            if j == 0: records[i] = 'DNF'
+        
         rec1.insert(tk.INSERT, records[0])
         rec1.configure(state = 'disabled')
         rec2.insert(tk.INSERT, records[1])
@@ -210,6 +223,7 @@ def calc5():
     최근 5회 기록의 평균을 측정하는 함수입니다.
     5회 기록 중 최고 기록과 최저 기록을 제외한
     3개의 기록으로 평균을 측정합니다.
+    DNF가 2개 이상일 경우 평균이 DNF로 표시됩니다.
     '''
     recentAvg5 = []
     farec = open('record.cbtm', 'r')
@@ -233,6 +247,7 @@ def calc5():
 
 def calcAvg5():
     global five_avgtxt
+
     avg5 = calc5()
     five_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 5회 평균: '+'%.3lf'%avg5)
     five_avgtxt.place(x = 85, y = 575)
@@ -242,6 +257,7 @@ def calc12():
     최근 12회 기록의 평균을 측정하는 함수입니다.
     12회 기록 중 최고 기록과 최저 기록을 제외한
     10개의 기록으로 평균을 측정합니다.
+    DNF가 2개 이상일 경우 평균이 DNF로 표시됩니다.
     '''
     recentAvg12 = []
     farec = open('record.cbtm', 'r')
@@ -265,12 +281,18 @@ def calc12():
 
 def calcAvg12():
     global twelve_avgtxt
+
     avg12 = calc12()
     twelve_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 12회 평균: '+'%.3lf'%avg12)
     twelve_avgtxt.place(x = 85, y = 600)
 
 def calcAvgall():
+    '''
+    측정된 모든 기록의 산술평균을 측정하는 함수입니다.
+    DNF가 2개 이상일 경우 평균이 DNF로 표시됩니다.
+    '''
     global all_avgtxt
+
     all_record = []
     farec = open('record.cbtm', 'r')
     try:
@@ -293,7 +315,13 @@ def calcAvgall():
         sys.exit()
 
 def best_score():
+    '''
+    최고 기록을 측정하는 함수입니다.
+    DNF가 1개일 경우 DNF를 제외한 최고 기록이 표시됩니다.
+    DNF가 2개 이상일 경우 최고 기록이 DNF로 표시됩니다.
+    '''
     global best_scoretxt
+
     all_record = []
     farec = open('record.cbtm', 'r')
     try:
@@ -320,7 +348,7 @@ def best_score():
         farec.close()
         sys.exit()
 
-def del_record1():
+def del_record1(): # 최근 기록 1회 삭제
     try:
         farec = open('record.cbtm', 'r')
         all_record = [i.rstrip() for i in farec.readlines()]
@@ -341,7 +369,7 @@ def del_record1():
         farec.close()
         fwrec.close()
 
-def del_record12():
+def del_record12(): # 최근 기록 12회 삭제
     try:
         farec = open('record.cbtm', 'r')
         all_record = [i.rstrip() for i in farec.readlines()]
@@ -364,7 +392,7 @@ def del_record12():
         farec.close()
         fwrec.close()
 
-def del_recordall():
+def del_recordall(): # 측정된 모든 기록 삭제
     try:
         farec = open('record.cbtm', 'w')
         farec.close()
@@ -374,7 +402,7 @@ def del_recordall():
         messagebox.showerror(title = 'Exception', message = '모든 기록 삭제를 수행할 수 없습니다.')
         farec.close()
 
-def record_to_txt():
+def record_to_txt(): # 최근 기록을 txt파일로 추출
     comming_soon()
     '''
     farec = open('record.cbtm', 'r')
@@ -411,6 +439,7 @@ def bundle1(): # 기록 새로고침 관련 함수 모음
 
 
 
+# -mainUI--------------------------------------------------------- #
 class Timer(tk.Frame): # 메인 윈도우 구성
     def __init__(self):
         global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time,\
@@ -479,6 +508,7 @@ class Timer(tk.Frame): # 메인 윈도우 구성
         global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
         print('이 문장이 출력이 되나요?')
         print(time_running)
+# ---------------------------------------------------------------- #
 
 
 
@@ -495,7 +525,7 @@ def comming_soon():
     messagebox.showinfo(title = '알림', message = '업데이트 예정입니다.')
 
 
-
+# -run------------------------------------------------------------ #
 if __name__ == "__main__":
     mainWindow = tk.Tk()
     mainWindow.geometry("600x900+100-100")
@@ -506,6 +536,6 @@ if __name__ == "__main__":
     load_record()
     run()
     mainWindow.mainloop()
-    
+# ---------------------------------------------------------------- #
     
     
