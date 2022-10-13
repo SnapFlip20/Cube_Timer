@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.1.4 --------- by SnapFlip20
+# Cube_Timer v0.1.5 --------- by SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox
@@ -19,7 +19,7 @@ except ModuleNotFoundError:
     sys.stderr.write('Error: cannot find showScrambleImg.py.\n')
 
 # ---------------------------------------------------------------- #
-version = 'v0.1.4'
+version = 'v0.1.5'
 # -push.bat------------------------------------------------------- #
 def pusher(): # batch file generator for Github push
     fbat = open('push.bat', 'w')
@@ -148,7 +148,7 @@ def load_record():
         rec1, rec2, rec3, rec4, rec5, rec6, rec7, rec8, rec9, rec10, rec11, rec12
     
     record_info1 = tk.Label(mainWindow, font = ('맑은 고딕 bold', 14), text = '-최근 기록-')
-    record_info1.place(x = 448, y = 410)
+    record_info1.place(x = 445, y = 410)
 
     rec1 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
     rec1.place(x = 435, y = 450, width = 125, height = 30)
@@ -186,7 +186,8 @@ def load_record():
                 records.append('')
         
         for (i, j) in enumerate(records):
-            if j == 0: records[i] = 'DNF'
+            if j.rstrip() == '0':
+                records[i] = 'DNF'
         
         rec1.insert(tk.INSERT, records[0])
         rec1.configure(state = 'disabled')
@@ -249,7 +250,10 @@ def calcAvg5():
     global five_avgtxt
 
     avg5 = calc5()
-    five_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 5회 평균: '+'%.3lf'%avg5)
+    if avg5 == 'DNF':
+        five_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 5회 평균: D N F')
+    else:
+        five_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 5회 평균: '+'%.3lf'%avg5)
     five_avgtxt.place(x = 85, y = 575)
 
 def calc12():
@@ -283,7 +287,10 @@ def calcAvg12():
     global twelve_avgtxt
 
     avg12 = calc12()
-    twelve_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 12회 평균: '+'%.3lf'%avg12)
+    if avg12 == 'DNF':
+        twelve_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 12회 평균: D N F')
+    else:
+        twelve_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 12회 평균: '+'%.3lf'%avg12)
     twelve_avgtxt.place(x = 85, y = 600)
 
 def calcAvgall():
@@ -303,13 +310,22 @@ def calcAvgall():
             if len(all_record) == 0:
                 avgall = 0
             else:
-                avgall = statistics.mean(all_record)
+                if 0 in all_record:
+                    if len(all_record) == 1:
+                        avgall = 0
+                    else:
+                        avgall = sum(all_record)/(len(all_record)-1)
+                else:
+                    avgall = statistics.mean(all_record)
         farec.close()
 
-        all_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 전체 평균: '+'%.3lf'%avgall)
+        if avgall == 'DNF':
+            all_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 전체 평균: D N F')
+        else:
+            all_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 전체 평균: '+'%.3lf'%avgall)
         all_avgtxt.place(x = 85, y = 625)
     except:
-        sys.stderr.write('Error: There was an error while calculating all avreage.\n')
+        sys.stderr.write('Error: There was an error while calculating all average.\n')
         messagebox.showerror(title = 'Exception', message = '"record.cbtm" 을(를) 읽는 동안 문제가 발생했습니다.\n파일을 임의로 수정한 적이 있었는지 확인해보십시오.')
         farec.close()
         sys.exit()
@@ -338,7 +354,10 @@ def best_score():
             else:
                 all_record.sort()
                 best = all_record[1] if all_record[0] == 0 else all_record[0]
-        best_scoretxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최고 기록: '+'%.3lf'%best)
+        if best == 'DNF':
+            best_scoretxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최고 기록: D N F')
+        else:
+            best_scoretxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최고 기록: '+'%.3lf'%best)
         best_scoretxt.place(x = 85, y = 650)
         farec.close()
             
@@ -402,6 +421,25 @@ def del_recordall(): # 측정된 모든 기록 삭제
         messagebox.showerror(title = 'Exception', message = '모든 기록 삭제를 수행할 수 없습니다.')
         farec.close()
 
+def dnf_add(): # 최근 기록에 DNF 추가
+    farec = open('record.cbtm', 'r')
+    all_record = [i.rstrip() for i in farec.readlines()]
+    farec.close()
+
+    if len(all_record) == 0:
+        messagebox.showerror(title = 'Exception', message = 'DNF 처리할 기록이 없습니다.')
+    elif all_record[-1] == '0':
+        messagebox.showerror(title = 'Exception', message = '이미 DNF 처리된 기록입니다.')
+    else:
+        all_record[-1] = '0' 
+
+    fwrec = open('record.cbtm', 'w')
+    for i in all_record:
+        fwrec.write(i + '\n')
+    fwrec.close()
+
+    bundle1()
+
 def record_to_txt(): # 최근 기록을 txt파일로 추출
     comming_soon()
     '''
@@ -444,7 +482,7 @@ class Timer(tk.Frame): # 메인 윈도우 구성
     def __init__(self):
         global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time,\
             time_txt, logo_image,\
-                penalty_bt, penalty_bt_menu, help_bt, recordtxt_bt
+                penalty_bt, penalty_bt_menu, help_bt, statis_bt, setting_bt, recordtxt_bt
         
         mainWindow.title('CubeTimer ' + version)
         time_running = False
@@ -484,25 +522,28 @@ class Timer(tk.Frame): # 메인 윈도우 구성
 
         # button
         penalty_bt = tk.Menubutton(mainWindow, font = ('맑은 고딕', 12), text = '기록 수정하기', relief = 'raised', direction = 'below')
-        penalty_bt.place(x = 70, y = 700, width = 150, height = 70)
+        penalty_bt.place(x = 60, y = 700, width = 160, height = 70)
         penalty_bt_menu = tk.Menu(penalty_bt, tearoff = 0)
         penalty_bt_menu.add_command(label = '최근 기록 1회 삭제', command = del_record1)
         penalty_bt_menu.add_command(label = '최근 기록 12회 삭제', command = del_record12)
         penalty_bt_menu.add_command(label = '최근 기록 모두 삭제', command = del_recordall)
         penalty_bt_menu.add_separator()
-        penalty_bt_menu.add_command(label = '최근 기록 1회 DNF 처리', command = comming_soon)
-        penalty_bt_menu.add_command(label = '최근 기록에 2초 Penalty 추가', command = comming_soon)
-        penalty_bt_menu.add_command(label = '최근 기록에 2초 Penalty 삭제', command = comming_soon)
+        penalty_bt_menu.add_command(label = '최근 기록 1회 DNF 처리', command = dnf_add)
+        penalty_bt_menu.add_command(label = '최근 기록 1회 2초 패널티 추가', command = comming_soon)
         penalty_bt["menu"] = penalty_bt_menu
 
         help_bt = tk.Button(mainWindow, font = ('맑은 고딕', 12), text = '도움말', command = help_win)
-        help_bt.place(x = 240, y = 700, width = 150, height = 70)
+        help_bt.place(x = 240, y = 700, width = 160, height = 70)
+
+        statis_bt = tk.Button(mainWindow, font = ('맑은 고딕', 12), text = '통계', command = comming_soon)
+        statis_bt.place(x = 240, y = 775, width = 160, height = 35)
+
+        setting_bt = tk.Button(mainWindow, font = ('맑은 고딕', 12), text = '설정', command = comming_soon) 
+        setting_bt.place(x = 240, y = 815, width = 160, height = 35)
 
         recordtxt_bt = tk.Button(mainWindow, font = ('맑은 고딕', 11), text = '텍스트 파일로 저장', command = record_to_txt)
-        recordtxt_bt.place(x = 427, y = 825, width = 140, height = 30)
+        recordtxt_bt.place(x = 427, y = 830, width = 140, height = 30)
         # ---Main UI setting end-----------------------------------------------
-
-        sys.stdout.write('Timer.__init__() is executed.\n')
 
     def _debug(self):
         global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
@@ -517,7 +558,7 @@ def help_win():
     helpWindow = tk.Tk()
     helpWindow.geometry("400x600")
     helpWindow.resizable(width = False, height = False)
-    help_txt1 = tk.Label(helpWindow, font = ('맑은 고딕', 12), text = '업데이트 예정입니다.')
+    help_txt1 = tk.Label(helpWindow, font = ('맑은 고딕', 12), text = '업데이트 예정입니다.\n\n제작자: SnapFlip20')
     help_txt1.place(x = 125, y = 200)
     helpWindow.mainloop()
 
@@ -528,7 +569,7 @@ def comming_soon():
 # -run------------------------------------------------------------ #
 if __name__ == "__main__":
     mainWindow = tk.Tk()
-    mainWindow.geometry("600x900+100-100")
+    mainWindow.geometry("600x920+100-100")
     mainWindow.resizable(width = False, height = False)
 
     pusher()
