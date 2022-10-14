@@ -1,8 +1,8 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.1.5 --------- by SnapFlip20
+# Cube_Timer v0.1.7 --------- by SnapFlip20
 
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, scrolledtext
 import datetime, os, time, statistics, sys
 
 try:
@@ -19,7 +19,7 @@ except ModuleNotFoundError:
     sys.stderr.write('Error: cannot find showScrambleImg.py.\n')
 
 # ---------------------------------------------------------------- #
-version = 'v0.1.5'
+version = 'v0.1.7'
 # -push.bat------------------------------------------------------- #
 def pusher(): # batch file generator for Github push
     fbat = open('push.bat', 'w')
@@ -41,6 +41,7 @@ def run():
     global time_running, start_time, stop_time, previous_time, elapsed_time
 
     if time_running:
+        time_txt.configure(fg = 'black')
         mainWindow.bind('<KeyRelease-space>', pause)
         now_time = time.time()
         time_dif = now_time - start_time
@@ -101,7 +102,7 @@ def scr_refresh(*_):
         sys.exit()
     
     scramble_box.insert(tk.INSERT, scramble_lst)
-    scramble_box.configure(state = 'disabled') # 스크램블 박스에 텍스트를 입력할 수 없게 변경
+    scramble_box.configure(state = 'disabled')
 
     scr_help1 = tk.Label(mainWindow, font = ('맑은 고딕', 10), text = '윗면이 흰색, 앞면이 초록색인\n상태에서 큐브를 섞어주세요.')
     scr_help1.place(x = 405, y = 185)
@@ -119,6 +120,7 @@ def start(*_): # 타이머 시작
 def pause(*_): # 타이머 정지
     global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
 
+    time_txt.configure(fg = 'limegreen')
     scr_refresh()
     record(str(round(elapsed_time, 3)))
     bundle1()
@@ -219,6 +221,15 @@ def load_record():
         messagebox.showerror(title = 'Exception', message = '파일 "record.cbtm" 을(를) 찾을 수 없습니다.')
         sys.exit()
 
+def time_converter(s): # ms 단위의 시간을 h:s:m.ms 단위로 변환
+    ms = s - int(s)
+    s = int(s)
+    h = s//3600
+    s = s - h*3600
+    m = s//60
+    s = s - m*60
+    return (h, m, s, ms)
+
 def calc5():
     '''
     최근 5회 기록의 평균을 측정하는 함수입니다.
@@ -251,9 +262,9 @@ def calcAvg5():
 
     avg5 = calc5()
     if avg5 == 'DNF':
-        five_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 5회 평균: D N F')
+        five_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 5회 평균: D N F     ')
     else:
-        five_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 5회 평균: '+'%.3lf'%avg5)
+        five_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 5회 평균: '+'%.3lf'%avg5+'     ')
     five_avgtxt.place(x = 85, y = 575)
 
 def calc12():
@@ -288,9 +299,9 @@ def calcAvg12():
 
     avg12 = calc12()
     if avg12 == 'DNF':
-        twelve_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 12회 평균: D N F')
+        twelve_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 12회 평균: D N F     ')
     else:
-        twelve_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 12회 평균: '+'%.3lf'%avg12)
+        twelve_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 12회 평균: '+'%.3lf'%avg12+'     ')
     twelve_avgtxt.place(x = 85, y = 600)
 
 def calcAvgall():
@@ -320,9 +331,9 @@ def calcAvgall():
         farec.close()
 
         if avgall == 'DNF':
-            all_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 전체 평균: D N F')
+            all_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 전체 평균: D N F     ')
         else:
-            all_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 전체 평균: '+'%.3lf'%avgall)
+            all_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 전체 평균: '+'%.3lf'%avgall+'     ')
         all_avgtxt.place(x = 85, y = 625)
     except:
         sys.stderr.write('Error: There was an error while calculating all average.\n')
@@ -355,9 +366,9 @@ def best_score():
                 all_record.sort()
                 best = all_record[1] if all_record[0] == 0 else all_record[0]
         if best == 'DNF':
-            best_scoretxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최고 기록: D N F')
+            best_scoretxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최고 기록: D N F     ')
         else:
-            best_scoretxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최고 기록: '+'%.3lf'%best)
+            best_scoretxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최고 기록: '+'%.3lf'%best+'     ')
         best_scoretxt.place(x = 85, y = 650)
         farec.close()
             
@@ -372,15 +383,18 @@ def del_record1(): # 최근 기록 1회 삭제
         farec = open('record.cbtm', 'r')
         all_record = [i.rstrip() for i in farec.readlines()]
         if len(all_record) == 0:
+            messagebox.showerror(title = 'Error', message = '삭제할 기록이 없습니다.')
             return
         all_record.pop()
         farec.close()
 
-        fwrec = open('record.cbtm', 'w')
-        for i in all_record:
-            fwrec.write(i + '\n')
-        fwrec.close()
-
+        ask_delrec1 = messagebox.askquestion(title = '알림', message = '최근 기록 1회를 삭제하시겠습니까?')
+        if ask_delrec1 == 'yes':
+            fwrec = open('record.cbtm', 'w')
+            for i in all_record:
+                fwrec.write(i + '\n')
+            fwrec.close()
+        
         bundle1()
     except:
         sys.stderr.write('Error: Cannot delete score.\n')
@@ -392,17 +406,23 @@ def del_record12(): # 최근 기록 12회 삭제
     try:
         farec = open('record.cbtm', 'r')
         all_record = [i.rstrip() for i in farec.readlines()]
-        if len(all_record) <= 12:
-            del_recordall()
+        if len(all_record) == 0:
+            messagebox.showerror(title = 'Error', message = '삭제할 기록이 없습니다.')
             return
-        for i in range(12):
-            all_record.pop()
-        farec.close()
+        if len(all_record) <= 12:
+            del_recordall(2)
+            return
+        else:
+            for i in range(12):
+                all_record.pop()
+            farec.close()
 
-        fwrec = open('record.cbtm', 'w')
-        for i in all_record:
-            fwrec.write(i + '\n')
-        fwrec.close()
+            ask_delrec12 = messagebox.askquestion(title = '알림', message = '최근 기록 12회를 삭제하시겠습니까?')
+            if ask_delrec12 == 'yes':
+                fwrec = open('record.cbtm', 'w')
+                for i in all_record:
+                    fwrec.write(i + '\n')
+                fwrec.close()
 
         bundle1()
     except:
@@ -411,62 +431,53 @@ def del_record12(): # 최근 기록 12회 삭제
         farec.close()
         fwrec.close()
 
-def del_recordall(): # 측정된 모든 기록 삭제
+def del_recordall(case=1): # 측정된 모든 기록 삭제
     try:
-        farec = open('record.cbtm', 'w')
-        farec.close()
-        bundle1()
+        if case == 1:
+            ask_delrecall = messagebox.askquestion(title = '알림', message = '측정된 모든 기록을 삭제하시겠습니까?')
+            if ask_delrecall == 'yes':
+                farec = open('record.cbtm', 'w')
+                farec.close()
+                bundle1()
+        elif case == 2:
+            ask_delrec12 = messagebox.askquestion(title = '알림', message = '최근 기록 12회를 삭제하시겠습니까?')
+            if ask_delrec12 == 'yes':
+                farec = open('record.cbtm', 'w')
+                farec.close()
+                bundle1()
     except:
         sys.stderr.write('Error: Cannot delete score.\n')
         messagebox.showerror(title = 'Exception', message = '모든 기록 삭제를 수행할 수 없습니다.')
         farec.close()
 
 def dnf_add(): # 최근 기록에 DNF 추가
-    farec = open('record.cbtm', 'r')
-    all_record = [i.rstrip() for i in farec.readlines()]
-    farec.close()
+    try:
+        farec = open('record.cbtm', 'r')
+        all_record = [i.rstrip() for i in farec.readlines()]
+        farec.close()
 
-    if len(all_record) == 0:
-        messagebox.showerror(title = 'Exception', message = 'DNF 처리할 기록이 없습니다.')
-    elif all_record[-1] == '0':
-        messagebox.showerror(title = 'Exception', message = '이미 DNF 처리된 기록입니다.')
-    else:
-        all_record[-1] = '0' 
+        if len(all_record) == 0:
+            messagebox.showerror(title = 'Exception', message = 'DNF 처리할 기록이 없습니다.')
+        elif all_record[-1] == '0':
+            messagebox.showerror(title = 'Exception', message = '이미 DNF 처리된 기록입니다.')
+        else:
+            ask_dnfadd = messagebox.askquestion(title = '알림', message = f'최근 기록({all_record[-1]})을 DNF 처리하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')
+            if ask_dnfadd == 'yes':
+                all_record[-1] = '0'
 
-    fwrec = open('record.cbtm', 'w')
-    for i in all_record:
-        fwrec.write(i + '\n')
-    fwrec.close()
+        fwrec = open('record.cbtm', 'w')
+        for i in all_record:
+            fwrec.write(i + '\n')
+        fwrec.close()
 
-    bundle1()
+        bundle1()
+    except:
+        sys.stderr.write('Error: Cannot add DNF.\n')
+        messagebox.showerror(title = 'Exception', message = 'DNF 처리하는 과정에서 문제가 발생했습니다.')
 
-def record_to_txt(): # 최근 기록을 txt파일로 추출
-    comming_soon()
-    '''
-    farec = open('record.cbtm', 'r')
-    allRecent = []
-    for i in farec.readlines():
-        if i == 'DNF':
-            allRecent.append(0.0)
-            continue
-        allRecent.append(float(i.rstrip()))
-    
-    fwrec = open('record_{}.txt'.format(datetime.datetime.now().strftime('%Y%m%d_%H%M%S')), 'w')
-    fwrec.write('\n')
-    fwrec.write('======== Cube_Timer record ========\n')
-    fwrec.write('파일 저장 시각: {}\n'.format(datetime.datetime.now().strftime('%Y.%m.%d %H:%M:%S')))
-    fwrec.write('===============================\n')
-    fwrec.write('\n')
-    for idx, r in enumerate(allRecent):
-        fwrec.write(f'{idx+1}. {r}\n')
-    fwrec.write('\n')
-    fwrec.write('===============================\n')
-    fwrec.write('\n')
-    fwrec.write(f'최근 5회 평균: {"%.3lf"%calc5()}\n')
-    fwrec.write(f'최근 12회 평균: {"%.3lf"%calc12()}\n')
-    fwrec.write(f'전체 평균: {"%.3lf"%min(allRecent)}\n')
-    fwrec.write('\n')
-    '''
+def change_txtcol(*_):
+    if not time_running:
+        time_txt.configure(text = '{:7.3f}'.format(0.000), fg = 'red')
 
 def bundle1(): # 기록 새로고침 관련 함수 모음
     calcAvg5()
@@ -482,7 +493,7 @@ class Timer(tk.Frame): # 메인 윈도우 구성
     def __init__(self):
         global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time,\
             time_txt, logo_image,\
-                penalty_bt, penalty_bt_menu, help_bt, statis_bt, setting_bt, recordtxt_bt
+                penalty_bt, penalty_bt_menu, help_bt, statis_bt, setting_bt
         
         mainWindow.title('CubeTimer ' + version)
         time_running = False
@@ -511,7 +522,9 @@ class Timer(tk.Frame): # 메인 윈도우 구성
         # timer
         time_txt = tk.Label(mainWindow, text = '0.000', font = ('consolas 35 bold'))
         time_txt.place(x = 120, y = 450)
+        mainWindow.bind('<space>', change_txtcol)
         mainWindow.bind('<KeyRelease-space>', start)
+        time_txt.configure(text = '{:7.3f}'.format(0.000), fg = 'black')
         reset()
 
         time_info = tk.Label(mainWindow, font = ('맑은 고딕', 14), text = '시작하거나 멈추려면 Space키를 누르세요.')
@@ -541,15 +554,7 @@ class Timer(tk.Frame): # 메인 윈도우 구성
         setting_bt = tk.Button(mainWindow, font = ('맑은 고딕', 12), text = '설정', command = comming_soon) 
         setting_bt.place(x = 240, y = 815, width = 160, height = 35)
 
-        recordtxt_bt = tk.Button(mainWindow, font = ('맑은 고딕', 11), text = '텍스트 파일로 저장', command = record_to_txt)
-        recordtxt_bt.place(x = 427, y = 830, width = 140, height = 30)
         # ---Main UI setting end-----------------------------------------------
-
-    def _debug(self):
-        global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
-        print('이 문장이 출력이 되나요?')
-        print(time_running)
-# ---------------------------------------------------------------- #
 
 
 
@@ -558,8 +563,25 @@ def help_win():
     helpWindow = tk.Tk()
     helpWindow.geometry("400x600")
     helpWindow.resizable(width = False, height = False)
-    help_txt1 = tk.Label(helpWindow, font = ('맑은 고딕', 12), text = '업데이트 예정입니다.\n\n제작자: SnapFlip20')
-    help_txt1.place(x = 125, y = 200)
+    #help_txt1 = tk.Label(helpWindow, font = ('맑은 고딕', 12), text = '업데이트 예정입니다.\n\n제작자: SnapFlip20')
+    #help_txt1.place(x = 125, y = 200)
+    help_txt = scrolledtext.ScrolledText(helpWindow, width = 40, height = 25, font = ('맑은 고딕', 12))
+    help_txt.insert(tk.END, f'Cube Timer {version}\n\n')
+    help_txt.insert(tk.END, '※ 기록 측정 방법:\n')
+    help_txt.insert(tk.END, '· 스페이스 바를 눌렀다가 떼는 순간 타이머가 시작됩니다.\n')
+    help_txt.insert(tk.END, '· 스페이스 바를 다시 누르면 타이머가 정지되고 측정된 기록이 저장됩니다.\n')
+    help_txt.insert(tk.END, '· 우측 -최근 기록- 에서 저장된 기록들을 확인할 수 있으며, 측정 일시가 빠른 순으로 표시됩니다.\n')
+    help_txt.insert(tk.END, '· 최근 기록 1회, 12회, 전체를 삭제할 수 있으며, 이 작업은 되돌릴 수 없습니다.\n')
+    help_txt.insert(tk.END, '· 최근 기록 1회에 대해서 DNF와 2초 패널티를 적용할 수 있으며, 이 작업은 되돌릴 수 없습니다.\n\n')
+    help_txt.insert(tk.END, '※ 기록 측정 방식\n')
+    help_txt.insert(tk.END, '· DNF가 2회 이상일 경우 5회, 12회, 전체 평균, 최고 기록이 모두 DNF로 표시됩니다.\n')
+    help_txt.insert(tk.END, '\n')
+    help_txt.insert(tk.END, '\n')
+    help_txt.insert(tk.END, '\n')
+    help_txt.insert(tk.END, '제작자: SnapFlip20\n')
+    help_txt.insert(tk.END, 'https://github.com/SnapFlip20/Cube_Timer\n')
+    help_txt.configure(state = 'disabled')
+    help_txt.pack()
     helpWindow.mainloop()
 
 def comming_soon():

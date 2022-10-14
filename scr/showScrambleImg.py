@@ -3,37 +3,24 @@
 dd = {'w':'white', 'y':'yellow', 'r':'red', 'o':'orange', 'g':'green', 'b':'blue'}
 
 def return_color(sc_lst):
-    # w means white(up), y means yellow(down) ...
-    w = [
+    w = [['w', 'w', 'w'],
         ['w', 'w', 'w'],
-        ['w', 'w', 'w'],
-        ['w', 'w', 'w']
-        ]
-    y = [
+        ['w', 'w', 'w']]
+    y = [['y', 'y', 'y'],
         ['y', 'y', 'y'],
-        ['y', 'y', 'y'],
-        ['y', 'y', 'y']
-        ]
-    r = [
+        ['y', 'y', 'y']]
+    r = [['r', 'r', 'r'],
         ['r', 'r', 'r'],
-        ['r', 'r', 'r'],
-        ['r', 'r', 'r']
-        ]
-    o = [
+        ['r', 'r', 'r']]
+    o = [['o', 'o', 'o'],
         ['o', 'o', 'o'],
-        ['o', 'o', 'o'],
-        ['o', 'o', 'o']
-        ]
-    g = [
+        ['o', 'o', 'o']]
+    g = [['g', 'g', 'g'],
         ['g', 'g', 'g'],
-        ['g', 'g', 'g'],
-        ['g', 'g', 'g']
-        ]
-    b = [
+        ['g', 'g', 'g']]
+    b = [['b', 'b', 'b'],
         ['b', 'b', 'b'],
-        ['b', 'b', 'b'],
-        ['b', 'b', 'b']
-        ]
+        ['b', 'b', 'b']]
 
     # simulation start
     for j in sc_lst:

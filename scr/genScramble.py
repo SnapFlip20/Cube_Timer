@@ -35,8 +35,4 @@ def _debug():
         if test[x][0] == test[x-2][0]:
             b = False
     
-    if b:
-        print(test)
-        print('Test passed.')
-    else:
-        print('Failed.')
+    print('Test passed.' if b else 'Failed.')
