@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.2.0 --------- by SnapFlip20
+# Cube_Timer v0.2.1 --------- by SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
@@ -19,7 +19,7 @@ except ModuleNotFoundError:
     sys.stderr.write('Error: cannot find showScrambleImg.py.\n')
 
 # ---------------------------------------------------------------- #
-version = 'v0.2.0'
+version = 'v0.2.1'
 # -push.bat------------------------------------------------------- #
 def pusher(): # batch file generator for Github push
     fbat = open('push.bat', 'w')
@@ -123,7 +123,7 @@ def pause(*_): # 타이머 정지
     time_txt.configure(fg = 'limegreen')
     scr_refresh()
     record(str(round(elapsed_time, 3)))
-    record_new(str(round(elapsed_time, 3)), now_scr, 0)
+    record_new(str(round(elapsed_time, 3)), now_scr)
     bundle1()
     mainWindow.bind('<KeyRelease-space>', start)
     time_running = False
@@ -143,11 +143,11 @@ def record(t): # 측정된 기록을 record.cbtm 파일에 작성
     farec.write(t + '\n')
     farec.close()
 
-def record_new(t, sc, isP):
+def record_new(t, sc):
     nowtime = datetime.datetime.now().strftime("%Y %m %d %H %M %S")
     nowtime_lst = list(nowtime.split())
     farec = open('recordDB.cbtm', 'a')
-    farec.write(f'{t} {sc} {nowtime_lst} {isP}\n')
+    farec.write(f'{t}  {sc}  {nowtime_lst}' + '\n')
     farec.close()
 
 def load_record():
@@ -274,7 +274,7 @@ def calcAvg5():
     if avg5 == 'DNF':
         five_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 5회 평균: D N F     ')
     else:
-        five_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 5회 평균: '+'%.3lf'%avg5+'     ')
+        five_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 5회 평균: ' + time_converter(avg5))
     five_avgtxt.place(x = 85, y = 575)
 
 def calc12():
@@ -311,7 +311,7 @@ def calcAvg12():
     if avg12 == 'DNF':
         twelve_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 12회 평균: D N F     ')
     else:
-        twelve_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 12회 평균: '+'%.3lf'%avg12+'     ')
+        twelve_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 12회 평균: ' + time_converter(avg12))
     twelve_avgtxt.place(x = 85, y = 600)
 
 def calcAvgall():
@@ -343,7 +343,7 @@ def calcAvgall():
         if avgall == 'DNF':
             all_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 전체 평균: D N F     ')
         else:
-            all_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 전체 평균: '+'%.3lf'%avgall+'     ')
+            all_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 전체 평균: ' + time_converter(avgall))
         all_avgtxt.place(x = 85, y = 625)
     except:
         sys.stderr.write('Error: There was an error while calculating all average.\n')
@@ -378,10 +378,10 @@ def best_score():
         if best == 'DNF':
             best_scoretxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최고 기록: D N F     ')
         else:
-            best_scoretxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최고 기록: '+'%.3lf'%best+'     ')
+            best_scoretxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최고 기록: ' + time_converter(best))
         best_scoretxt.place(x = 85, y = 650)
         farec.close()
-            
+    
     except:
         sys.stderr.write('Error: There was an error while calculating best score.\n')
         messagebox.showerror(title = 'Exception', message = '"record.cbtm" 을(를) 읽는 동안 문제가 발생했습니다.\n파일을 임의로 수정한 적이 있었는지 확인해보십시오.')
@@ -531,14 +531,14 @@ class Timer(tk.Frame): # 메인 윈도우 구성
 
         # timer
         time_txt = tk.Label(mainWindow, text = '0:00:00', font = ('consolas 32 bold'))
-        time_txt.place(x = 140, y = 440)
+        time_txt.place(x = 130, y = 440)
         mainWindow.bind('<space>', change_txtcol)
         mainWindow.bind('<KeyRelease-space>', start)
         time_txt.configure(text = '0:00:00', fg = 'black')
         reset()
 
-        time_info = tk.Label(mainWindow, font = ('맑은 고딕', 14), text = '시작하거나 멈추려면 Space키를 누르세요.')
-        time_info.place(x = 51, y = 525)
+        time_info = tk.Label(mainWindow, font = ('맑은 고딕', 15), text = '시작하거나 멈추려면 Space키를 누르세요.')
+        time_info.place(x = 40, y = 520)
 
         # stat
         bundle1()
@@ -573,6 +573,7 @@ def help_win():
     helpWindow = tk.Tk()
     helpWindow.geometry("400x600")
     helpWindow.resizable(width = False, height = False)
+    helpWindow.title('도움말')
     #help_txt1 = tk.Label(helpWindow, font = ('맑은 고딕', 12), text = '업데이트 예정입니다.\n\n제작자: SnapFlip20')
     #help_txt1.place(x = 125, y = 200)
     help_txt = scrolledtext.ScrolledText(helpWindow, width = 40, height = 25, font = ('맑은 고딕', 12))
