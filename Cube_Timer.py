@@ -196,7 +196,7 @@ def load_record():
                 records.append('')
         
         for (i, j) in enumerate(records):
-            if j.rstrip() == '0':
+            if j.rstrip() == '0:00.000':
                 records[i] = 'DNF'
         
         rec1.insert(tk.INSERT, records[0])
