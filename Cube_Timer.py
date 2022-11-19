@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.1.7 --------- by SnapFlip20
+# Cube_Timer v0.2.0 --------- by SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
@@ -19,7 +19,7 @@ except ModuleNotFoundError:
     sys.stderr.write('Error: cannot find showScrambleImg.py.\n')
 
 # ---------------------------------------------------------------- #
-version = 'v0.1.7'
+version = 'v0.2.0'
 # -push.bat------------------------------------------------------- #
 def pusher(): # batch file generator for Github push
     fbat = open('push.bat', 'w')
@@ -46,9 +46,9 @@ def run():
         now_time = time.time()
         time_dif = now_time - start_time
         elapsed_time = time_dif + previous_time
-        time_txt.configure(text = '{:7.3f}'.format(elapsed_time))
+        time_txt.configure(text = f'{time_converter(elapsed_time)}')
     
-    mainWindow.after(1, run)
+    mainWindow.after(10, run)
 
 
 
@@ -110,8 +110,8 @@ def scr_refresh(*_):
     scr_help2.place(x = 457, y = 360)
 
 def start(*_): # 타이머 시작
-    global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
-
+    global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt, now_scr
+    now_scr = scramble_lst
     if not time_running:
         time_running = True
         start_time = time.time()
@@ -123,6 +123,7 @@ def pause(*_): # 타이머 정지
     time_txt.configure(fg = 'limegreen')
     scr_refresh()
     record(str(round(elapsed_time, 3)))
+    record_new(str(round(elapsed_time, 3)), now_scr, 0)
     bundle1()
     mainWindow.bind('<KeyRelease-space>', start)
     time_running = False
@@ -135,11 +136,18 @@ def reset(*_): # 타이머 리셋
     time_running = False
     elapsed_time = 0.0
     previous_time = 0.0
-    time_txt.configure(text = '{:7.3f}'.format(elapsed_time))
+    time_txt.configure(text = '0:00.000')
 
 def record(t): # 측정된 기록을 record.cbtm 파일에 작성
     farec = open('record.cbtm', 'a')
     farec.write(t + '\n')
+    farec.close()
+
+def record_new(t, sc, isP):
+    nowtime = datetime.datetime.now().strftime("%Y %m %d %H %M %S")
+    nowtime_lst = list(nowtime.split())
+    farec = open('recordDB.cbtm', 'a')
+    farec.write(f'{t} {sc} {nowtime_lst} {isP}\n')
     farec.close()
 
 def load_record():
@@ -181,7 +189,7 @@ def load_record():
         records = []
         frrec = open('record.cbtm', 'r')
         for i in frrec.readlines()[::-1]:
-            records.append(i)
+            records.append(time_converter(float(i)))
         
         if len(records) < 12:
             for i in range(12-len(records)):
@@ -221,14 +229,16 @@ def load_record():
         messagebox.showerror(title = 'Exception', message = '파일 "record.cbtm" 을(를) 찾을 수 없습니다.')
         sys.exit()
 
-def time_converter(s): # ms 단위의 시간을 h:s:m.ms 단위로 변환
-    ms = s - int(s)
+def time_converter(s): # ms 단위의 시간을 h:s:m.ms 단위로 변환하여 표시
+    ms = round(s - int(s), 3)
     s = int(s)
     h = s//3600
     s = s - h*3600
     m = s//60
     s = s - m*60
-    return (h, m, s, ms)
+    h = str(h); m = str(m); s = str(s); ms = str(ms)[2:]
+    #return f'{h}:{m}:{s}.{ms}'
+    return f'{m}:{s.zfill(2)}.{ms.zfill(3)}'
 
 def calc5():
     '''
@@ -477,7 +487,7 @@ def dnf_add(): # 최근 기록에 DNF 추가
 
 def change_txtcol(*_):
     if not time_running:
-        time_txt.configure(text = '{:7.3f}'.format(0.000), fg = 'red')
+        time_txt.configure(text = '0:00.000', fg = 'red')
 
 def bundle1(): # 기록 새로고침 관련 함수 모음
     calcAvg5()
@@ -520,11 +530,11 @@ class Timer(tk.Frame): # 메인 윈도우 구성
             scr_refresh()
 
         # timer
-        time_txt = tk.Label(mainWindow, text = '0.000', font = ('consolas 35 bold'))
-        time_txt.place(x = 120, y = 450)
+        time_txt = tk.Label(mainWindow, text = '0:00:00', font = ('consolas 32 bold'))
+        time_txt.place(x = 140, y = 440)
         mainWindow.bind('<space>', change_txtcol)
         mainWindow.bind('<KeyRelease-space>', start)
-        time_txt.configure(text = '{:7.3f}'.format(0.000), fg = 'black')
+        time_txt.configure(text = '0:00:00', fg = 'black')
         reset()
 
         time_info = tk.Label(mainWindow, font = ('맑은 고딕', 14), text = '시작하거나 멈추려면 Space키를 누르세요.')

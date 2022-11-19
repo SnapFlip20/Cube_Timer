@@ -59,3 +59,7 @@
     * 시간 단위를 변환해 주는 time_converter 함수 추가
     * 도움말 내용 추가
     * '텍스트 파일로 저장' 버튼 기능 임시 삭제
+* 0.2.0(2022/11/19)
+    * record.cbtm의 DB 구조를 수정한 recordDB.cbtm 추가(test)
+    * 측정된 기록을 새로운 구조로 저장하는 record_new 함수 추가
+    * time_converter 함수 적용(타이머와 최근 기록의 시간이 mm:ss.ms 꼴로 표시되게 수정)
