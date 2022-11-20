@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.2.1 --------- by SnapFlip20
+# Cube_Timer v0.2.3 --------- by SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
@@ -19,7 +19,7 @@ except ModuleNotFoundError:
     sys.stderr.write('Error: cannot find showScrambleImg.py.\n')
 
 # ---------------------------------------------------------------- #
-version = 'v0.2.1'
+version = 'v0.2.3'
 # -push.bat------------------------------------------------------- #
 def pusher(): # batch file generator for Github push
     fbat = open('push.bat', 'w')
