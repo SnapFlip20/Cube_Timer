@@ -155,7 +155,8 @@ def record_new(t, sc):
 
 def load_record():
     '''
-    최근 측정한 12회 기록을 측정 시기가 빠른 기록 순으로 표시합니다.
+    최근 측정한 12회 기록을 표시합니다.
+    가장 최근에 측정된 기록이 맨 위의 블록에 표시됩니다.
     '''
     global record_info1,\
         rec1, rec2, rec3, rec4, rec5, rec6, rec7, rec8, rec9, rec10, rec11, rec12
@@ -232,7 +233,7 @@ def load_record():
         messagebox.showerror(title = 'Exception', message = '파일 "record.cbtm" 을(를) 찾을 수 없습니다.')
         sys.exit()
 
-def time_converter(s): # ms 단위의 시간을 h:s:m.ms 단위로 변환하여 표시
+def time_converter(s):
     ms = round(s - int(s), 3)
     s = int(s)
     h = s//3600
@@ -408,6 +409,14 @@ def del_record1(): # 최근 기록 1회 삭제
             for i in all_record:
                 fwrec.write(i + '\n')
             fwrec.close()
+            fwrec = open('recordDB.cbtm', 'w')
+            for i in all_record:
+                fwrec.write(i + '\n')
+            fwrec.close()
+            fwrec = open('usP.cbtm', 'w')
+            for i in all_record:
+                fwrec.write(i + '\n')
+            fwrec.close()
         
         bundle1()
     except:
@@ -438,6 +447,14 @@ def del_record12(): # 최근 기록 12회 삭제
                 for i in all_record:
                     fwrec.write(i + '\n')
                 fwrec.close()
+                fwrec = open('recordDB.cbtm', 'w')
+                for i in all_record:
+                    fwrec.write(i + '\n')
+                fwrec.close()
+                fwrec = open('isP.cbtm', 'w')
+                for i in all_record:
+                    fwrec.write(i + '\n')
+                fwrec.close()
 
         bundle1()
     except:
@@ -453,11 +470,19 @@ def del_recordall(case=1): # 측정된 모든 기록 삭제
             if ask_delrecall == 'yes':
                 farec = open('record.cbtm', 'w')
                 farec.close()
+                farec = open('recordDB.cbtm', 'w')
+                farec.close()
+                farec = open('isP.cbtm', 'w')
+                farec.close()
                 bundle1()
         elif case == 2:
             ask_delrec12 = messagebox.askquestion(title = '알림', message = '최근 기록 12회를 삭제하시겠습니까?')
             if ask_delrec12 == 'yes':
                 farec = open('record.cbtm', 'w')
+                farec.close()
+                farec = open('recordDB.cbtm', 'w')
+                farec.close()
+                farec = open('isP.cbtm', 'w')
                 farec.close()
                 bundle1()
     except:
