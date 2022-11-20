@@ -138,9 +138,12 @@ def reset(*_): # 타이머 리셋
     previous_time = 0.0
     time_txt.configure(text = '0:00.000')
 
-def record(t): # 측정된 기록을 record.cbtm 파일에 작성
+def record(t):
     farec = open('record.cbtm', 'a')
     farec.write(t + '\n')
+    farec.close()
+    farec = open('isP.cbtm', 'a')
+    farec.write('0' + '\n')
     farec.close()
 
 def record_new(t, sc):
@@ -394,6 +397,7 @@ def del_record1(): # 최근 기록 1회 삭제
         all_record = [i.rstrip() for i in farec.readlines()]
         if len(all_record) == 0:
             messagebox.showerror(title = 'Error', message = '삭제할 기록이 없습니다.')
+            farec.close()
             return
         all_record.pop()
         farec.close()
@@ -418,6 +422,7 @@ def del_record12(): # 최근 기록 12회 삭제
         all_record = [i.rstrip() for i in farec.readlines()]
         if len(all_record) == 0:
             messagebox.showerror(title = 'Error', message = '삭제할 기록이 없습니다.')
+            farec.close()
             return
         if len(all_record) <= 12:
             del_recordall(2)
@@ -484,6 +489,42 @@ def dnf_add(): # 최근 기록에 DNF 추가
     except:
         sys.stderr.write('Error: Cannot add DNF.\n')
         messagebox.showerror(title = 'Exception', message = 'DNF 처리하는 과정에서 문제가 발생했습니다.')
+
+def penalty_add(): # 최근 기록에 2초 패널티 추가
+    try:
+        farec = open('isP.cbtm', 'r')
+        all_record = [i.rstrip() for i in farec.readlines()]
+        if len(all_record) == 0:
+            messagebox.showerror(title = 'Error', message = '패널티를 추가할 기록이 없습니다.')
+            farec.close()
+            return
+        elif all_record[-1] == '1':
+            messagebox.showerror(title = 'Error', message = '이미 2초 패널티가 추가된 기록입니다.')
+            farec.close()
+            return
+        else:
+            ask_addpnl = messagebox.askquestion(title = '알림', message = '최근 기록 1회에 2초 패널티를 추가하시겠습니까?')
+            if ask_addpnl == 'yes':
+                all_record[-1] = '1'
+                farec.close()
+                fwrec = open('isP.cbtm', 'w')
+                for i in all_record:
+                    fwrec.write(str(i) + '\n')
+                fwrec.close()
+
+                farec = open('record.cbtm', 'r')
+                all_record = [i.rstrip() for i in farec.readlines()]
+                tmp = float(all_record.pop()); tmp += 2
+                all_record.append(round(tmp, 3))
+                fwrec = open('record.cbtm', 'w')
+                for i in all_record:
+                    fwrec.write(str(i) + '\n')
+                fwrec.close()
+
+            bundle1()
+    except:
+        sys.stderr.write('Error: Cannot add 2s penalty.\n')
+        messagebox.showerror(title = 'Exception', message = '패널티를 추가하는 과정에서 문제가 발생했습니다.')
 
 def change_txtcol(*_):
     if not time_running:
@@ -552,7 +593,7 @@ class Timer(tk.Frame): # 메인 윈도우 구성
         penalty_bt_menu.add_command(label = '최근 기록 모두 삭제', command = del_recordall)
         penalty_bt_menu.add_separator()
         penalty_bt_menu.add_command(label = '최근 기록 1회 DNF 처리', command = dnf_add)
-        penalty_bt_menu.add_command(label = '최근 기록 1회 2초 패널티 추가', command = comming_soon)
+        penalty_bt_menu.add_command(label = '최근 기록 1회 2초 패널티 추가', command = penalty_add)
         penalty_bt["menu"] = penalty_bt_menu
 
         help_bt = tk.Button(mainWindow, font = ('맑은 고딕', 12), text = '도움말', command = help_win)
