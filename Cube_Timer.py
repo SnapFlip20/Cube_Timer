@@ -1,9 +1,11 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.2.3 --------- by SnapFlip20
+# Cube_Timer v0.2.5 --------- by SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import datetime, os, time, statistics, sys
+
+version = 'v0.2.5'
 
 try:
     sys.path.append("./scr")
@@ -18,8 +20,6 @@ try:
 except ModuleNotFoundError:
     sys.stderr.write('Error: cannot find showScrambleImg.py.\n')
 
-# ---------------------------------------------------------------- #
-version = 'v0.2.3'
 # -push.bat------------------------------------------------------- #
 def pusher(): # batch file generator for Github push
     fbat = open('push.bat', 'w')
@@ -44,11 +44,11 @@ def run():
         time_txt.configure(fg = 'black')
         mainWindow.bind('<KeyRelease-space>', pause)
         now_time = time.time()
-        time_dif = now_time - start_time
-        elapsed_time = time_dif + previous_time
+        time_dif = now_time-start_time
+        elapsed_time = time_dif+previous_time
         time_txt.configure(text = f'{time_converter(elapsed_time)}')
     
-    mainWindow.after(10, run)
+    mainWindow.after(1, run)
 
 
 
@@ -57,9 +57,8 @@ def scr_refresh(*_):
     genScramble.py에서 랜덤으로 생성된 스크램블을 텍스트로 출력하고,
     스크램블 후 윗면의 모습을 이미지로 표시합니다.
     '''
-    global scramble_info, scramble_box, scramble_lst,\
-        color1, color2, color3, color4, color5, color6, color7, color8, color9,\
-            scr_help1, scr_help2
+    global scramble_lst,\
+        color1, color2, color3, color4, color5, color6, color7, color8, color9
     
     scramble_info = tk.Label(mainWindow, font = ('맑은 고딕', 20), text = 'Scramble')
     scramble_info.place(x = 50, y = 200)
@@ -110,7 +109,7 @@ def scr_refresh(*_):
     scr_help2.place(x = 457, y = 360)
 
 def start(*_): # 타이머 시작
-    global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt, now_scr
+    global time_running, start_time, previous_time, now_scr
     now_scr = scramble_lst
     if not time_running:
         time_running = True
@@ -118,7 +117,7 @@ def start(*_): # 타이머 시작
         previous_time = elapsed_time
 
 def pause(*_): # 타이머 정지
-    global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
+    global time_running, elapsed_time
 
     time_txt.configure(fg = 'limegreen')
     scr_refresh()
@@ -130,8 +129,6 @@ def pause(*_): # 타이머 정지
     previous_time = elapsed_time = 0.0
 
 def reset(*_): # 타이머 리셋
-    global time_running, start_time, stop_time, previous_time, elapsed_time, time_txt
-
     mainWindow.bind('<KeyRelease-space>', start)
     time_running = False
     elapsed_time = 0.0
@@ -150,7 +147,7 @@ def record_new(t, sc):
     nowtime = datetime.datetime.now().strftime("%Y %m %d %H %M %S")
     nowtime_lst = list(nowtime.split())
     farec = open('recordDB.cbtm', 'a')
-    farec.write(f'{t}  {sc}  {nowtime_lst}' + '\n')
+    farec.write(f'[{t}, {sc}, {nowtime_lst}]' + '\n')
     farec.close()
 
 def load_record():
@@ -158,9 +155,7 @@ def load_record():
     최근 측정한 12회 기록을 표시합니다.
     가장 최근에 측정된 기록이 맨 위의 블록에 표시됩니다.
     '''
-    global record_info1,\
-        rec1, rec2, rec3, rec4, rec5, rec6, rec7, rec8, rec9, rec10, rec11, rec12
-    
+
     record_info1 = tk.Label(mainWindow, font = ('맑은 고딕 bold', 14), text = '-최근 기록-')
     record_info1.place(x = 445, y = 410)
 
@@ -234,12 +229,9 @@ def load_record():
         sys.exit()
 
 def time_converter(s):
-    ms = round(s - int(s), 3)
-    s = int(s)
-    h = s//3600
-    s = s - h*3600
-    m = s//60
-    s = s - m*60
+    ms = round(s - int(s), 3); s = int(s)
+    h = s//3600; s = s - h*3600
+    m = s//60; s = s - m*60
     h = str(h); m = str(m); s = str(s); ms = str(ms)[2:]
     #return f'{h}:{m}:{s}.{ms}'
     return f'{m}:{s.zfill(2)}.{ms.zfill(3)}'
@@ -413,7 +405,7 @@ def del_record1(): # 최근 기록 1회 삭제
             for i in all_record:
                 fwrec.write(i + '\n')
             fwrec.close()
-            fwrec = open('usP.cbtm', 'w')
+            fwrec = open('isP.cbtm', 'w')
             for i in all_record:
                 fwrec.write(i + '\n')
             fwrec.close()
@@ -491,11 +483,11 @@ def del_recordall(case=1): # 측정된 모든 기록 삭제
         farec.close()
 
 def dnf_add(): # 최근 기록에 DNF 추가
-    try:
+    #try:
+        # 1(record)
         farec = open('record.cbtm', 'r')
         all_record = [i.rstrip() for i in farec.readlines()]
         farec.close()
-
         if len(all_record) == 0:
             messagebox.showerror(title = 'Exception', message = 'DNF 처리할 기록이 없습니다.')
         elif all_record[-1] == '0':
@@ -504,28 +496,48 @@ def dnf_add(): # 최근 기록에 DNF 추가
             ask_dnfadd = messagebox.askquestion(title = '알림', message = f'최근 기록({all_record[-1]})을 DNF 처리하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')
             if ask_dnfadd == 'yes':
                 all_record[-1] = '0'
-
-        fwrec = open('record.cbtm', 'w')
-        for i in all_record:
-            fwrec.write(i + '\n')
-        fwrec.close()
+            fwrec = open('record.cbtm', 'w')
+            for i in all_record:
+                fwrec.write(str(i) + '\n')
+            fwrec.close()
+            # 2(recordDB)
+            frrec = open('recordDB.cbtm', 'r')
+            all_record = []
+            for i in frrec.readlines():
+                ii = eval(i.rstrip())
+                all_record.append(ii) 
+            frrec.close()
+            tmp = all_record.pop(); tmp[0] = 0
+            all_record.append(tmp)
+            fwrec = open('recordDB.cbtm', 'w')
+            for i in all_record:
+                fwrec.write(str(i) + '\n')
+            fwrec.close()
 
         bundle1()
-    except:
-        sys.stderr.write('Error: Cannot add DNF.\n')
-        messagebox.showerror(title = 'Exception', message = 'DNF 처리하는 과정에서 문제가 발생했습니다.')
+    #except:
+        #sys.stderr.write('Error: Cannot add DNF.\n')
+        #messagebox.showerror(title = 'Exception', message = 'DNF 처리하는 과정에서 문제가 발생했습니다.')
 
 def penalty_add(): # 최근 기록에 2초 패널티 추가
-    try:
+    #try:
         farec = open('isP.cbtm', 'r')
+        farec2 = open('record.cbtm', 'r')
         all_record = [i.rstrip() for i in farec.readlines()]
+        all_record2 = [i.rstrip() for i in farec2.readlines()]
         if len(all_record) == 0:
             messagebox.showerror(title = 'Error', message = '패널티를 추가할 기록이 없습니다.')
             farec.close()
+            farec2.close()
             return
         elif all_record[-1] == '1':
             messagebox.showerror(title = 'Error', message = '이미 2초 패널티가 추가된 기록입니다.')
             farec.close()
+            farec2.close()
+            return
+        elif all_record2[-1] == '0':
+            messagebox.showerror(title = 'Error', message = 'DNF 기록에는 2초 패널티를 추가할 수 없습니다.')
+            farec2.close()
             return
         else:
             ask_addpnl = messagebox.askquestion(title = '알림', message = '최근 기록 1회에 2초 패널티를 추가하시겠습니까?')
@@ -536,7 +548,7 @@ def penalty_add(): # 최근 기록에 2초 패널티 추가
                 for i in all_record:
                     fwrec.write(str(i) + '\n')
                 fwrec.close()
-
+                # 1(record)
                 farec = open('record.cbtm', 'r')
                 all_record = [i.rstrip() for i in farec.readlines()]
                 tmp = float(all_record.pop()); tmp += 2
@@ -545,11 +557,26 @@ def penalty_add(): # 최근 기록에 2초 패널티 추가
                 for i in all_record:
                     fwrec.write(str(i) + '\n')
                 fwrec.close()
+                # 2(recordDB)
+                frrec = open('recordDB.cbtm', 'r')
+                all_record = []
+                for i in frrec.readlines():
+                    ii = eval(i.rstrip())
+                    all_record.append(ii)
+                
+                tmp = all_record.pop();
+                tmp[0] = round(float(tmp[0])+2, 3)
+                all_record.append(tmp)
+                frrec.close()
+                fwrec = open('recordDB.cbtm', 'w')
+                for i in all_record:
+                    fwrec.write(str(i) + '\n')
+                fwrec.close()
 
             bundle1()
-    except:
-        sys.stderr.write('Error: Cannot add 2s penalty.\n')
-        messagebox.showerror(title = 'Exception', message = '패널티를 추가하는 과정에서 문제가 발생했습니다.')
+    #except:
+        #sys.stderr.write('Error: Cannot add 2s penalty.\n')
+        #messagebox.showerror(title = 'Exception', message = '패널티를 추가하는 과정에서 문제가 발생했습니다.')
 
 def change_txtcol(*_):
     if not time_running:

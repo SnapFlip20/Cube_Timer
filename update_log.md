@@ -71,3 +71,5 @@
     * 2초 패널티 추가 여부를 기록하는 isP.cbtm 추가(test)
     * penalty_add 함수 추가
     * recordDB.cbtm, isP.cbtm 임시적으로 적용
+* 0.2.5(2022/1/21)
+    * recordDB.cbtm, isP.cbtm 최종 적용
