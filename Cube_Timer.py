@@ -1,11 +1,11 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.2.5 --------- by SnapFlip20
+# Cube_Timer v0.2.5.1 --------- by SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import datetime, os, time, statistics, sys
 
-version = 'v0.2.5'
+version = 'v0.2.5.1'
 
 try:
     sys.path.append("./scr")
@@ -233,7 +233,6 @@ def time_converter(s):
     h = s//3600; s = s - h*3600
     m = s//60; s = s - m*60
     h = str(h); m = str(m); s = str(s); ms = str(ms)[2:]
-    #return f'{h}:{m}:{s}.{ms}'
     return f'{m}:{s.zfill(2)}.{ms.zfill(3)}'
 
 def calc5():
@@ -435,14 +434,17 @@ def del_record12(): # 최근 기록 12회 삭제
 
             ask_delrec12 = messagebox.askquestion(title = '알림', message = '최근 기록 12회를 삭제하시겠습니까?')
             if ask_delrec12 == 'yes':
+                # record.cbtm
                 fwrec = open('record.cbtm', 'w')
                 for i in all_record:
                     fwrec.write(i + '\n')
                 fwrec.close()
+                # recordDB.cbtm
                 fwrec = open('recordDB.cbtm', 'w')
                 for i in all_record:
                     fwrec.write(i + '\n')
                 fwrec.close()
+                # isP.cbtm
                 fwrec = open('isP.cbtm', 'w')
                 for i in all_record:
                     fwrec.write(i + '\n')
@@ -483,8 +485,7 @@ def del_recordall(case=1): # 측정된 모든 기록 삭제
         farec.close()
 
 def dnf_add(): # 최근 기록에 DNF 추가
-    #try:
-        # 1(record)
+    try:
         farec = open('record.cbtm', 'r')
         all_record = [i.rstrip() for i in farec.readlines()]
         farec.close()
@@ -496,35 +497,38 @@ def dnf_add(): # 최근 기록에 DNF 추가
             ask_dnfadd = messagebox.askquestion(title = '알림', message = f'최근 기록({all_record[-1]})을 DNF 처리하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')
             if ask_dnfadd == 'yes':
                 all_record[-1] = '0'
+            # record.cbtm
             fwrec = open('record.cbtm', 'w')
             for i in all_record:
                 fwrec.write(str(i) + '\n')
             fwrec.close()
-            # 2(recordDB)
+            # recordDB.cbtm
             frrec = open('recordDB.cbtm', 'r')
-            all_record = []
+            all_record2 = []
             for i in frrec.readlines():
                 ii = eval(i.rstrip())
-                all_record.append(ii) 
+                all_record2.append(ii) 
             frrec.close()
-            tmp = all_record.pop(); tmp[0] = 0
-            all_record.append(tmp)
+            tmp = all_record2.pop(); tmp[0] = 0
+            all_record2.append(tmp)
             fwrec = open('recordDB.cbtm', 'w')
-            for i in all_record:
+            for i in all_record2:
                 fwrec.write(str(i) + '\n')
             fwrec.close()
 
         bundle1()
-    #except:
-        #sys.stderr.write('Error: Cannot add DNF.\n')
-        #messagebox.showerror(title = 'Exception', message = 'DNF 처리하는 과정에서 문제가 발생했습니다.')
+    except:
+        sys.stderr.write('Error: Cannot add DNF.\n')
+        messagebox.showerror(title = 'Exception', message = 'DNF 처리하는 과정에서 문제가 발생했습니다.')
 
 def penalty_add(): # 최근 기록에 2초 패널티 추가
-    #try:
+    try:
         farec = open('isP.cbtm', 'r')
         farec2 = open('record.cbtm', 'r')
-        all_record = [i.rstrip() for i in farec.readlines()]
-        all_record2 = [i.rstrip() for i in farec2.readlines()]
+        all_record = [i.rstrip() for i in farec.readlines()] # isP
+        all_record2 = [i.rstrip() for i in farec2.readlines()] # record
+        farec.close(); farec2.close()
+        recent_ = float(all_record2[-1])
         if len(all_record) == 0:
             messagebox.showerror(title = 'Error', message = '패널티를 추가할 기록이 없습니다.')
             farec.close()
@@ -542,41 +546,38 @@ def penalty_add(): # 최근 기록에 2초 패널티 추가
         else:
             ask_addpnl = messagebox.askquestion(title = '알림', message = '최근 기록 1회에 2초 패널티를 추가하시겠습니까?')
             if ask_addpnl == 'yes':
+                # isP.cbtm
                 all_record[-1] = '1'
-                farec.close()
                 fwrec = open('isP.cbtm', 'w')
                 for i in all_record:
                     fwrec.write(str(i) + '\n')
                 fwrec.close()
-                # 1(record)
-                farec = open('record.cbtm', 'r')
-                all_record = [i.rstrip() for i in farec.readlines()]
-                tmp = float(all_record.pop()); tmp += 2
-                all_record.append(round(tmp, 3))
+                # record.cbtm
+                all_record2.pop()
+                all_record2.append(round(recent_+2, 3))
                 fwrec = open('record.cbtm', 'w')
-                for i in all_record:
+                for i in all_record2:
                     fwrec.write(str(i) + '\n')
                 fwrec.close()
-                # 2(recordDB)
+                # recordDB.cbtm
                 frrec = open('recordDB.cbtm', 'r')
-                all_record = []
+                all_record3 = []
                 for i in frrec.readlines():
                     ii = eval(i.rstrip())
-                    all_record.append(ii)
-                
-                tmp = all_record.pop();
-                tmp[0] = round(float(tmp[0])+2, 3)
-                all_record.append(tmp)
+                    all_record3.append(ii)
+                tmp = all_record3.pop();
+                tmp[0] = round(recent_+2, 3)
+                all_record3.append(tmp)
                 frrec.close()
                 fwrec = open('recordDB.cbtm', 'w')
-                for i in all_record:
+                for i in all_record3:
                     fwrec.write(str(i) + '\n')
                 fwrec.close()
 
             bundle1()
-    #except:
-        #sys.stderr.write('Error: Cannot add 2s penalty.\n')
-        #messagebox.showerror(title = 'Exception', message = '패널티를 추가하는 과정에서 문제가 발생했습니다.')
+    except:
+        sys.stderr.write('Error: Cannot add 2s penalty.\n')
+        messagebox.showerror(title = 'Exception', message = '패널티를 추가하는 과정에서 문제가 발생했습니다.')
 
 def change_txtcol(*_):
     if not time_running:
@@ -667,8 +668,6 @@ def help_win():
     helpWindow.geometry("400x600")
     helpWindow.resizable(width = False, height = False)
     helpWindow.title('도움말')
-    #help_txt1 = tk.Label(helpWindow, font = ('맑은 고딕', 12), text = '업데이트 예정입니다.\n\n제작자: SnapFlip20')
-    #help_txt1.place(x = 125, y = 200)
     help_txt = scrolledtext.ScrolledText(helpWindow, width = 40, height = 25, font = ('맑은 고딕', 12))
     help_txt.insert(tk.END, f'Cube Timer {version}\n\n')
     help_txt.insert(tk.END, '※ 기록 측정 방법:\n')
