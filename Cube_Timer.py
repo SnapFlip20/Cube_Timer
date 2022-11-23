@@ -1,11 +1,11 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.2.5.1 --------- by SnapFlip20
+# Cube_Timer v0.2.6 --------- by SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import datetime, os, time, statistics, sys
 
-version = 'v0.2.5.1'
+version = 'v0.2.6'
 
 try:
     sys.path.append("./scr")
@@ -549,15 +549,12 @@ def penalty_add(): # 최근 기록에 2초 패널티 추가
                 # isP.cbtm
                 all_record[-1] = '1'
                 fwrec = open('isP.cbtm', 'w')
-                for i in all_record:
-                    fwrec.write(str(i) + '\n')
+                for i in all_record: fwrec.write(str(i) + '\n')
                 fwrec.close()
                 # record.cbtm
-                all_record2.pop()
-                all_record2.append(round(recent_+2, 3))
+                all_record2.pop(); all_record2.append(round(recent_+2, 3))
                 fwrec = open('record.cbtm', 'w')
-                for i in all_record2:
-                    fwrec.write(str(i) + '\n')
+                for i in all_record2: fwrec.write(str(i) + '\n')
                 fwrec.close()
                 # recordDB.cbtm
                 frrec = open('recordDB.cbtm', 'r')
@@ -565,13 +562,10 @@ def penalty_add(): # 최근 기록에 2초 패널티 추가
                 for i in frrec.readlines():
                     ii = eval(i.rstrip())
                     all_record3.append(ii)
-                tmp = all_record3.pop();
-                tmp[0] = round(recent_+2, 3)
-                all_record3.append(tmp)
+                tmp = all_record3.pop(); tmp[0] = round(recent_+2, 3); all_record3.append(tmp)
                 frrec.close()
                 fwrec = open('recordDB.cbtm', 'w')
-                for i in all_record3:
-                    fwrec.write(str(i) + '\n')
+                for i in all_record3: fwrec.write(str(i) + '\n')
                 fwrec.close()
 
             bundle1()
