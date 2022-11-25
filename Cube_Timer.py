@@ -1,11 +1,11 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.2.6 --------- by SnapFlip20
+# Cube_Timer v0.2.7 --------- by SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import datetime, os, time, statistics, sys
 
-version = 'v0.2.6'
+version = 'v0.2.7'
 
 try:
     sys.path.append("./scr")
@@ -185,6 +185,10 @@ def load_record():
     rec12.place(x = 435, y = 780, width = 125, height = 30)
 
     try:
+        farec = open('isP.cbtm', 'r')
+        isPenalty = [i.rstrip() for i in farec.readlines()[::-1]] # isP
+        farec.close()
+
         records = []
         frrec = open('record.cbtm', 'r')
         for i in frrec.readlines()[::-1]:
@@ -193,11 +197,15 @@ def load_record():
         if len(records) < 12:
             for i in range(12-len(records)):
                 records.append('')
+
+        for (i, j) in enumerate(isPenalty):
+            if j == '1'and records[i] != '0:00.000':
+                records[i] += '(+2s)'
         
         for (i, j) in enumerate(records):
             if j.rstrip() == '0:00.000':
                 records[i] = 'DNF'
-        
+
         rec1.insert(tk.INSERT, records[0])
         rec1.configure(state = 'disabled')
         rec2.insert(tk.INSERT, records[1])
