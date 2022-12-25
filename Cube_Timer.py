@@ -1,11 +1,11 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.2.7 --------- by SnapFlip20
+# Cube_Timer v0.2.8 --------- by SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import datetime, os, time, statistics, sys
 
-version = 'v0.2.7'
+version = 'v0.2.8'
 
 try:
     sys.path.append("./scr")
@@ -585,6 +585,69 @@ def change_txtcol(*_):
     if not time_running:
         time_txt.configure(text = '0:00.000', fg = 'red')
 
+def record_to_txt(*_): # 최근 기록을 txt파일로 추출
+    farec = open('recordDB.cbtm', 'r')
+    allRecent = []
+    for i in farec.readlines():
+        allRecent.append(eval(i))
+    farec.close()
+
+    farec = open('isP.cbtm', 'r')
+    isPenalty = []
+    for i in farec.readlines():
+        isPenalty.append(int(i))
+    farec.close()
+
+    if len(allRecent) == 0:
+        messagebox.showerror(title = '알림', message = '측정된 기록이 없습니다.')
+        return
+    
+    allRecord = []
+    for i in allRecent:
+        allRecord.append(float(i[0]))
+    mn = 0
+    if 0 in allRecord:
+        mn = sum(allRecord)/(len(allRecord)-1)
+    else:
+        mn = sum(allRecord)/len(allRecord)
+    allRecord.sort()
+    bs = allRecord[1] if allRecord[0] == 0 else allRecord[0]
+
+    if len(allRecent) != len(isPenalty):
+        sys.stderr.write('Error: There was an error while reading DB file.\n')
+        messagebox.showerror(title = 'Exception', message = '데이터 파일을 읽는 동안 문제가 발생했습니다.\n파일을 임의로 수정한 적이 있었는지 확인해보십시오.')
+        sys.exit()
+
+    fwrec = open('record_{}.txt'.format(datetime.datetime.now().strftime('%Y%m%d_%H%M%S')), 'w')
+    fwrec.write('\n')
+    fwrec.write('========= Cube Timer record =========\n')
+    fwrec.write('파일 저장 시각: {}\n'.format(datetime.datetime.now().strftime('%Y.%m.%d %H:%M:%S')))
+    fwrec.write('================================\n')
+    fwrec.write('\n')
+    for idx, r in enumerate(allRecent):
+        if r[0] == 0:
+            fwrec.write(f'{idx+1}. DNF | ')
+        elif isPenalty[idx]:
+            fwrec.write(f'{idx+1}. {time_converter(float(r[0]))}(+2s) | ')
+        else:
+            fwrec.write(f'{idx+1}. {time_converter(r[0])} | ')
+        fwrec.write('스크램블: ')
+        for j in r[1]:
+            fwrec.write(j + ' ')
+        fwrec.write('\n')
+    fwrec.write('\n')
+    fwrec.write('===============================\n')
+    fwrec.write('\n')
+    fwrec.write(f'최근 5회 평균: {time_converter(calc5())}\n')
+    fwrec.write(f'최근 12회 평균: {time_converter(calc12())}\n')
+    fwrec.write(f'전체 평균: {time_converter(mn)}\n')
+    fwrec.write(f'최고 기록: {time_converter(bs)}\n')
+    fwrec.write('\n\n\n')
+    fwrec.write(f'<Cube_Timer {version} 에서 생성됨>\n')
+    fwrec.close()
+
+    messagebox.showinfo(title = '알림', message = '기록이 저장되었습니다.')
+
 def bundle1(): # 기록 새로고침 관련 함수 모음
     calcAvg5()
     calcAvg12()
@@ -599,7 +662,7 @@ class Timer(tk.Frame): # 메인 윈도우 구성
     def __init__(self):
         global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time,\
             time_txt, logo_image,\
-                penalty_bt, penalty_bt_menu, help_bt, statis_bt, setting_bt
+                penalty_bt, penalty_bt_menu, help_bt, setting_bt, textsave_bt
         
         mainWindow.title('CubeTimer ' + version)
         time_running = False
@@ -654,11 +717,11 @@ class Timer(tk.Frame): # 메인 윈도우 구성
         help_bt = tk.Button(mainWindow, font = ('맑은 고딕', 12), text = '도움말', command = help_win)
         help_bt.place(x = 240, y = 700, width = 160, height = 70)
 
-        statis_bt = tk.Button(mainWindow, font = ('맑은 고딕', 12), text = '통계', command = comming_soon)
-        statis_bt.place(x = 240, y = 775, width = 160, height = 35)
-
         setting_bt = tk.Button(mainWindow, font = ('맑은 고딕', 12), text = '설정', command = comming_soon) 
-        setting_bt.place(x = 240, y = 815, width = 160, height = 35)
+        setting_bt.place(x = 240, y = 780, width = 160, height = 70)
+
+        textsave_bt = tk.Button(mainWindow, font = ('맑은 고딕', 11), text = '텍스트 파일로\n내보내기', command = record_to_txt)
+        textsave_bt.place(x = 430, y = 825, width = 135, height = 50)
 
         # ---Main UI setting end-----------------------------------------------
 
