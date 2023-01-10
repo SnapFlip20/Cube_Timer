@@ -24,7 +24,7 @@ def isValid(array):
             array[x][0] = random.choice(dir1)
     return array
 
-def _debug():
+def _test():
     test = gen_scramble()
     b = True
 
@@ -35,4 +35,4 @@ def _debug():
         if test[x][0] == test[x-2][0]:
             b = False
     
-    print('Test passed.' if b else 'Failed.')
+    return b

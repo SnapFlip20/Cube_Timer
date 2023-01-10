@@ -1,11 +1,11 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.2.8 --------- by SnapFlip20
+# Cube_Timer v0.3.0 --------- by SnapFlip20
 
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import datetime, os, time, statistics, sys
 
-version = 'v0.2.8'
+version = 'v0.3.0'
 
 try:
     sys.path.append("./scr")
@@ -19,6 +19,31 @@ try:
     import showScrambleImg
 except ModuleNotFoundError:
     sys.stderr.write('Error: cannot find showScrambleImg.py.\n')
+
+def checkFileSetting():
+    if not os.path.isfile('Cube_Timer_logo.gif'):
+        sys.stderr.write('Error: cannot find Cube_Timer_logo.gif.\n')
+        messagebox.showerror('.../Cube_Timer_logo.gif 파일이 존재하지 않습니다.')
+        return False
+    if not os.path.isfile('record.cbtm'):
+        sys.stderr.write('Error: cannot find record.cbtm.\n')
+        messagebox.showerror('.../record.cbtm 파일이 존재하지 않습니다.')
+        return False
+    if not os.path.isfile('recordDB.cbtm'):
+        sys.stderr.write('Error: cannot find recordDB.cbtm.\n')
+        messagebox.showerror('.../recordDB.cbtm 파일이 존재하지 않습니다.')
+        return False
+    if not os.path.isfile('isP.cbtm'):
+        sys.stderr.write('Error: cannot find isP.cbtm.\n')
+        messagebox.showerror('.../isP.cbtm 파일이 존재하지 않습니다.')
+        return False
+    if not genScramble._test():
+        sys.stderr.write('Error: There was an error in src/genScramble.py.\n')
+        messagebox.showerror('.../scr/genScramble.py 파일에서 오류가 발생했습니다.')
+        return False
+    return True
+
+
 
 # -push.bat------------------------------------------------------- #
 def pusher(): # batch file generator for Github push
@@ -61,40 +86,40 @@ def scr_refresh(*_):
         color1, color2, color3, color4, color5, color6, color7, color8, color9
     
     scramble_info = tk.Label(mainWindow, font = ('맑은 고딕', 20), text = 'Scramble')
-    scramble_info.place(x = 50, y = 200)
+    scramble_info.place(x = 50, y = 180)
     scramble_box = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal', width = 10)
-    scramble_box.place(x = 50, y = 250, width = 350, height = 100)
+    scramble_box.place(x = 50, y = 230, width = 350, height = 100)
 
     try:
         scramble_lst = genScramble.gen_scramble()
         scr_result = showScrambleImg.return_color(scramble_lst)
         color1 = tk.PhotoImage(file = "image/{}".format(scr_result[0]+'.gif'))
         colorf1 = tk.Label(mainWindow, image = color1)
-        colorf1.place(x = 430, y = 230)
+        colorf1.place(x = 430, y = 180)
         color2 = tk.PhotoImage(file = "image/{}".format(scr_result[1]+'.gif'))
         colorf2 = tk.Label(mainWindow, image = color2)
-        colorf2.place(x = 475, y = 230)
+        colorf2.place(x = 475, y = 180)
         color3 = tk.PhotoImage(file = "image/{}".format(scr_result[2]+'.gif'))
         colorf3 = tk.Label(mainWindow, image = color3)
-        colorf3.place(x = 520, y = 230)
+        colorf3.place(x = 520, y = 180)
         color4 = tk.PhotoImage(file = "image/{}".format(scr_result[3]+'.gif'))
         colorf4 = tk.Label(mainWindow, image = color4)
-        colorf4.place(x = 430, y = 275)
+        colorf4.place(x = 430, y = 225)
         color5 = tk.PhotoImage(file = "image/{}".format(scr_result[4]+'.gif'))
         colorf5 = tk.Label(mainWindow, image = color5)
-        colorf5.place(x = 475, y = 275)
+        colorf5.place(x = 475, y = 225)
         color6 = tk.PhotoImage(file = "image/{}".format(scr_result[5]+'.gif'))
         colorf6 = tk.Label(mainWindow, image = color6)
-        colorf6.place(x = 520, y = 275)
+        colorf6.place(x = 520, y = 225)
         color7 = tk.PhotoImage(file = "image/{}".format(scr_result[6]+'.gif'))
         colorf7 = tk.Label(mainWindow, image = color7)
-        colorf7.place(x = 430, y = 320)
+        colorf7.place(x = 430, y = 270)
         color8 = tk.PhotoImage(file = "image/{}".format(scr_result[7]+'.gif'))
         colorf8 = tk.Label(mainWindow, image = color8)
-        colorf8.place(x = 475, y = 320)
+        colorf8.place(x = 475, y = 270)
         color9 = tk.PhotoImage(file = "image/{}".format(scr_result[8]+'.gif'))
         colorf9 = tk.Label(mainWindow, image = color9)
-        colorf9.place(x = 520, y = 320)
+        colorf9.place(x = 520, y = 270)
     except:
         sys.stderr.write('Error: scramble loading was failed.\n')
         messagebox.showerror(title = 'Exception', message = 'Scramble 을(를) 구성하는 도중 오류가 발생했습니다.')
@@ -103,10 +128,8 @@ def scr_refresh(*_):
     scramble_box.insert(tk.INSERT, scramble_lst)
     scramble_box.configure(state = 'disabled')
 
-    scr_help1 = tk.Label(mainWindow, font = ('맑은 고딕', 10), text = '윗면이 흰색, 앞면이 초록색인\n상태에서 큐브를 섞어주세요.')
-    scr_help1.place(x = 405, y = 185)
-    scr_help2 = tk.Label(mainWindow, font = ('맑은 고딕', 10), text = '앞면(초록색)')
-    scr_help2.place(x = 457, y = 360)
+    scr_help1 = tk.Label(mainWindow, font = ('맑은 고딕 bold', 15), text = '[ 윗면 미리보기 ]')
+    scr_help1.place(x = 416, y = 135)
 
 def start(*_): # 타이머 시작
     global time_running, start_time, previous_time, now_scr
@@ -156,33 +179,33 @@ def load_record():
     가장 최근에 측정된 기록이 맨 위의 블록에 표시됩니다.
     '''
 
-    record_info1 = tk.Label(mainWindow, font = ('맑은 고딕 bold', 14), text = '-최근 기록-')
-    record_info1.place(x = 445, y = 410)
+    record_info1 = tk.Label(mainWindow, font = ('맑은 고딕 bold', 15), text = '[ 최근 기록 ]')
+    record_info1.place(x = 436, y = 345)
 
     rec1 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
-    rec1.place(x = 435, y = 450, width = 125, height = 30)
+    rec1.place(x = 435, y = 390, width = 125, height = 30)
     rec2 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
-    rec2.place(x = 435, y = 480, width = 125, height = 30)
+    rec2.place(x = 435, y = 420, width = 125, height = 30)
     rec3 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
-    rec3.place(x = 435, y = 510, width = 125, height = 30)
+    rec3.place(x = 435, y = 450, width = 125, height = 30)
     rec4 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
-    rec4.place(x = 435, y = 540, width = 125, height = 30)
+    rec4.place(x = 435, y = 480, width = 125, height = 30)
     rec5 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
-    rec5.place(x = 435, y = 570, width = 125, height = 30)
+    rec5.place(x = 435, y = 510, width = 125, height = 30)
     rec6 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
-    rec6.place(x = 435, y = 600, width = 125, height = 30)
+    rec6.place(x = 435, y = 540, width = 125, height = 30)
     rec7 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
-    rec7.place(x = 435, y = 630, width = 125, height = 30)
+    rec7.place(x = 435, y = 570, width = 125, height = 30)
     rec8 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
-    rec8.place(x = 435, y = 660, width = 125, height = 30)
+    rec8.place(x = 435, y = 600, width = 125, height = 30)
     rec9 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
-    rec9.place(x = 435, y = 690, width = 125, height = 30)
+    rec9.place(x = 435, y = 630, width = 125, height = 30)
     rec10 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
-    rec10.place(x = 435, y = 720, width = 125, height = 30)
+    rec10.place(x = 435, y = 660, width = 125, height = 30)
     rec11 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
-    rec11.place(x = 435, y = 750, width = 125, height = 30)
+    rec11.place(x = 435, y = 690, width = 125, height = 30)
     rec12 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
-    rec12.place(x = 435, y = 780, width = 125, height = 30)
+    rec12.place(x = 435, y = 720, width = 125, height = 30)
 
     try:
         farec = open('isP.cbtm', 'r')
@@ -278,7 +301,7 @@ def calcAvg5():
         five_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 5회 평균: D N F     ')
     else:
         five_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 5회 평균: ' + time_converter(avg5))
-    five_avgtxt.place(x = 85, y = 575)
+    five_avgtxt.place(x = 85, y = 555)
 
 def calc12():
     '''
@@ -315,7 +338,7 @@ def calcAvg12():
         twelve_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 12회 평균: D N F     ')
     else:
         twelve_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최근 12회 평균: ' + time_converter(avg12))
-    twelve_avgtxt.place(x = 85, y = 600)
+    twelve_avgtxt.place(x = 85, y = 580)
 
 def calcAvgall():
     '''
@@ -347,7 +370,7 @@ def calcAvgall():
             all_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 전체 평균: D N F     ')
         else:
             all_avgtxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 전체 평균: ' + time_converter(avgall))
-        all_avgtxt.place(x = 85, y = 625)
+        all_avgtxt.place(x = 85, y = 605)
     except:
         sys.stderr.write('Error: There was an error while calculating all average.\n')
         messagebox.showerror(title = 'Exception', message = '"record.cbtm" 을(를) 읽는 동안 문제가 발생했습니다.\n파일을 임의로 수정한 적이 있었는지 확인해보십시오.')
@@ -382,7 +405,7 @@ def best_score():
             best_scoretxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최고 기록: D N F     ')
         else:
             best_scoretxt = tk.Label(mainWindow, font = ('맑은 고딕', 12), text = '· 최고 기록: ' + time_converter(best))
-        best_scoretxt.place(x = 85, y = 650)
+        best_scoretxt.place(x = 85, y = 630)
         farec.close()
     
     except:
@@ -662,7 +685,7 @@ class Timer(tk.Frame): # 메인 윈도우 구성
     def __init__(self):
         global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time,\
             time_txt, logo_image,\
-                penalty_bt, penalty_bt_menu, help_bt, setting_bt, textsave_bt
+                penalty_bt, penalty_bt_menu, help_bt, textsave_bt
         
         mainWindow.title('CubeTimer ' + version)
         time_running = False
@@ -684,27 +707,27 @@ class Timer(tk.Frame): # 메인 윈도우 구성
 
         # scramble
         scr_refresh_bt = tk.Button(mainWindow, font = ('맑은 고딕', 12), text = '새로고침', command = scr_refresh)
-        scr_refresh_bt.place(x = 300, y = 200, width = 90, height = 40)
+        scr_refresh_bt.place(x = 300, y = 180, width = 90, height = 40)
         if not time_running:
             scr_refresh()
 
         # timer
-        time_txt = tk.Label(mainWindow, text = '0:00:00', font = ('consolas 32 bold'))
-        time_txt.place(x = 130, y = 440)
+        time_txt = tk.Label(mainWindow, text = '0:00:00', font = ('consolas 35 bold'))
+        time_txt.place(x = 115, y = 380)
         mainWindow.bind('<space>', change_txtcol)
         mainWindow.bind('<KeyRelease-space>', start)
         time_txt.configure(text = '0:00:00', fg = 'black')
         reset()
 
         time_info = tk.Label(mainWindow, font = ('맑은 고딕', 15), text = '시작하거나 멈추려면 Space키를 누르세요.')
-        time_info.place(x = 40, y = 520)
+        time_info.place(x = 40, y = 470)
 
         # stat
         bundle1()
 
         # button
         penalty_bt = tk.Menubutton(mainWindow, font = ('맑은 고딕', 12), text = '기록 수정하기', relief = 'raised', direction = 'below')
-        penalty_bt.place(x = 60, y = 700, width = 160, height = 70)
+        penalty_bt.place(x = 60, y = 670, width = 160, height = 80)
         penalty_bt_menu = tk.Menu(penalty_bt, tearoff = 0)
         penalty_bt_menu.add_command(label = '최근 기록 1회 삭제', command = del_record1)
         penalty_bt_menu.add_command(label = '최근 기록 12회 삭제', command = del_record12)
@@ -715,13 +738,10 @@ class Timer(tk.Frame): # 메인 윈도우 구성
         penalty_bt["menu"] = penalty_bt_menu
 
         help_bt = tk.Button(mainWindow, font = ('맑은 고딕', 12), text = '도움말', command = help_win)
-        help_bt.place(x = 240, y = 700, width = 160, height = 70)
+        help_bt.place(x = 240, y = 670, width = 160, height = 80)
 
-        setting_bt = tk.Button(mainWindow, font = ('맑은 고딕', 12), text = '설정', command = comming_soon) 
-        setting_bt.place(x = 240, y = 780, width = 160, height = 70)
-
-        textsave_bt = tk.Button(mainWindow, font = ('맑은 고딕', 11), text = '텍스트 파일로\n내보내기', command = record_to_txt)
-        textsave_bt.place(x = 430, y = 825, width = 135, height = 50)
+        textsave_bt = tk.Button(mainWindow, font = ('맑은 고딕', 11), text = '텍스트 파일로\n기록 내보내기', command = record_to_txt)
+        textsave_bt.place(x = 430, y = 760, width = 135, height = 50)
 
         # ---Main UI setting end-----------------------------------------------
 
@@ -758,8 +778,11 @@ def comming_soon():
 
 # -run------------------------------------------------------------ #
 if __name__ == "__main__":
+    if not checkFileSetting():
+        sys.exit()
+
     mainWindow = tk.Tk()
-    mainWindow.geometry("600x920+100-100")
+    mainWindow.geometry("590x870+100-100")
     mainWindow.resizable(width = False, height = False)
 
     pusher()
