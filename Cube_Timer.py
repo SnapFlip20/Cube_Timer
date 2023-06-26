@@ -1,15 +1,16 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.3.1 --------- by SnapFlip20
+# Cube_Timer v0.3.1b --------- by SnapFlip20
 # https://github.com/SnapFlip20/Cube_Timer
 
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import datetime, os, time, statistics, sys
 
-version = 'v0.3.1'
+version = 'v0.3.1b'
 
 # -check---------------------------------------------------------- #
 
+# check file existence
 try:
     sys.path.append("./scr")
 except:
@@ -26,14 +27,11 @@ except ModuleNotFoundError:
     sys.stderr.write('Error: cannot find showScrambleImg.py.\n')
     sys.exit()
 
+# check file setting
 def checkFileSetting():
     if not os.path.isfile('Cube_Timer_logo.gif'):
         sys.stderr.write('Error: cannot find Cube_Timer_logo.gif.\n')
         messagebox.showerror('.../Cube_Timer_logo.gif 파일이 존재하지 않습니다.')
-        return False
-    if not os.path.isfile('record.cbtm'):
-        sys.stderr.write('Error: cannot find record.cbtm.\n')
-        messagebox.showerror('.../record.cbtm 파일이 존재하지 않습니다.')
         return False
     if not os.path.isfile('recordDB.cbtm'):
         sys.stderr.write('Error: cannot find recordDB.cbtm.\n')
@@ -47,10 +45,9 @@ def checkFileSetting():
         sys.stderr.write('Error: There was an error in src/genScramble.py.\n')
         messagebox.showerror('.../scr/genScramble.py 파일에서 오류가 발생했습니다.')
         return False
-    return True # check passed
+    return True # passed
 
 # -check end------------------------------------------------------ #
-
 
 def run():
     global time_running, start_time, stop_time, previous_time, elapsed_time
@@ -66,13 +63,12 @@ def run():
     mainWindow.after(1, run)
 
 def scr_refresh(*_):
-    '''
-    genScramble.py에서 랜덤으로 생성된 스크램블을 텍스트로 출력하고,
-    스크램블 후 윗면의 모습을 이미지로 표시합니다.
-    '''
     global scramble_lst,\
         color1, color2, color3, color4, color5, color6, color7, color8, color9
     
+    if time_running:
+        return
+
     scramble_info = tk.Label(mainWindow, font = ('맑은 고딕', 20), text = 'Scramble')
     scramble_info.place(x = 50, y = 180)
     scramble_box = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal', width = 10)
@@ -128,45 +124,30 @@ def start(*_): # 타이머 시작
         previous_time = elapsed_time
 
 def pause(*_): # 타이머 정지
-    global time_running, elapsed_time
+    global time_running, elapsed_time, previous_time
 
     time_txt.configure(fg = 'limegreen')
-    scr_refresh()
-    record(str(round(elapsed_time, 3)))
     record_new(str(round(elapsed_time, 3)), now_scr)
     bundle1()
     mainWindow.bind('<KeyRelease-space>', start)
     time_running = False
     previous_time = elapsed_time = 0.0
+    scr_refresh()
 
 def reset(*_): # 타이머 리셋
+    global time_running, elapsed_time, previous_time
     mainWindow.bind('<KeyRelease-space>', start)
     time_running = False
     elapsed_time = 0.0
     previous_time = 0.0
     time_txt.configure(text = '0:00.000')
 
-def record(t):
-    farec = open('record.cbtm', 'a')
-    farec.write(t + '\n')
-    farec.close()
-    farec = open('isP.cbtm', 'a')
-    farec.write('0' + '\n')
-    farec.close()
-
 def record_new(t, sc):
-    nowtime = datetime.datetime.now().strftime("%Y %m %d %H %M %S")
-    nowtime_lst = list(nowtime.split())
     farec = open('recordDB.cbtm', 'a')
-    farec.write(f'[{t}, {sc}, {nowtime_lst}]' + '\n')
+    farec.write(f'{t}/{sc}/0' + '\n')
     farec.close()
 
 def load_record():
-    '''
-    최근 측정한 12회 기록을 표시합니다.
-    가장 최근에 측정된 기록이 맨 위의 블록에 표시됩니다.
-    '''
-
     record_info1 = tk.Label(mainWindow, font = ('맑은 고딕 bold', 15), text = '[ 최근 기록 ]')
     record_info1.place(x = 436, y = 345)
 
@@ -196,24 +177,21 @@ def load_record():
     rec12.place(x = 435, y = 720, width = 125, height = 30)
 
     try:
-        farec = open('isP.cbtm', 'r')
-        isPenalty = [i.rstrip() for i in farec.readlines()[::-1]] # isP
-        farec.close()
+        frrec = open('recordDB.cbtm', 'r')
+        all_info = [i for i in frrec.readlines()[::-1]]
+        records = [time_converter(float(i.split('/')[0])) for i in all_info]
+        frrec.close()
 
-        records = []
-        frrec = open('record.cbtm', 'r')
-        for i in frrec.readlines()[::-1]:
-            records.append(time_converter(float(i)))
-        if len(records) < 12:
-            for i in range(12-len(records)):
+        if len(all_info) < 12:
+            for i in range(12-len(all_info)):
                 records.append('')
-        for (i, j) in enumerate(isPenalty):
-            if j == '1'and records[i] != '0:00.000':
-                records[i] += '(+2s)'
+        for (i, j) in enumerate(all_info):
+            tm, sc, pn = j.split('/')
+            if pn.rstrip() == '1' and records[i] != '0:00.000':
+                records[i] += '(+2s)' 
         for (i, j) in enumerate(records):
             if j.rstrip() == '0:00.000':
                 records[i] = 'DNF'
-        frrec.close()
 
         rec1.insert(tk.INSERT, records[0]); rec1.configure(state = 'disabled')
         rec2.insert(tk.INSERT, records[1]); rec2.configure(state = 'disabled')
@@ -234,8 +212,8 @@ def load_record():
 
 def time_converter(s):
     ms = round(s - int(s), 3); s = int(s)
-    h = s//3600; s = s - h*3600
-    m = s//60; s = s - m*60
+    h = s//3600; s -= h*3600
+    m = s//60; s -= m*60
     h = str(h); m = str(m); s = str(s); ms = str(ms)[2:]
     return f'{m}:{s.zfill(2)}.{ms.zfill(3)}'
 
@@ -247,9 +225,9 @@ def calc5():
     DNF가 2개 이상일 경우 평균이 DNF로 표시됩니다.
     '''
     recentAvg5 = []
-    farec = open('record.cbtm', 'r')
+    farec = open('recordDB.cbtm', 'r')
     try:
-        recentAvg5 = list(map(float, farec.readlines()[::-1][:5]))
+        recentAvg5 = [float(i.split('/')[0]) for i in farec.readlines()[::-1]][:5]
         if recentAvg5.count(0) > 1:
             avg5 = 'DNF'
         else:
@@ -284,9 +262,9 @@ def calc12():
     DNF가 2개 이상일 경우 평균이 DNF로 표시됩니다.
     '''
     recentAvg12 = []
-    farec = open('record.cbtm', 'r')
+    farec = open('recordDB.cbtm', 'r')
     try:
-        recentAvg12 = list(map(float, farec.readlines()[::-1][:12]))
+        recentAvg12 = [float(i.split('/')[0]) for i in farec.readlines()[::-1]][:12]
         if recentAvg12.count(0) > 1:
             avg12 = 'DNF'
         else:
@@ -321,9 +299,9 @@ def calcAvgall():
     global all_avgtxt
 
     all_record = []
-    farec = open('record.cbtm', 'r')
+    farec = open('recordDB.cbtm', 'r')
     try:
-        all_record = list(map(float, farec.readlines()))
+        all_record = [float(i.split('/')[0]) for i in farec.readlines()[::-1]]
         if all_record.count(0) > 1:
             avgall = 'DNF'
         else:
@@ -360,8 +338,8 @@ def best_score():
 
     try:
         all_record = []
-        farec = open('record.cbtm', 'r')
-        all_record = list(map(float, farec.readlines()))
+        farec = open('recordDB.cbtm', 'r')
+        all_record = [float(i.split('/')[0]) for i in farec.readlines()]
         if all_record.count(0) > 1:
             best = 'DNF'
         else:
@@ -390,8 +368,9 @@ def del_record1(*_): # 최근 기록 1회 삭제
         if time_running:
             return
         
-        farec = open('record.cbtm', 'r')
+        farec = open('recordDB.cbtm', 'r')
         all_record = [i.rstrip() for i in farec.readlines()]
+
         if len(all_record) == 0:
             messagebox.showerror(title = 'Error', message = '삭제할 기록이 없습니다.')
             farec.close()
@@ -401,10 +380,7 @@ def del_record1(*_): # 최근 기록 1회 삭제
         ask_delrec1 = messagebox.askquestion(title = '알림', message = '최근 기록 1회를 삭제하시겠습니까?')
         if ask_delrec1 == 'yes':
             all_record.pop()
-            # record.cbtm
-            fwrec = open('record.cbtm', 'w')
-            for i in all_record: fwrec.write(i + '\n')
-            fwrec.close()
+
             # recordDB.cbtm
             fwrec = open('recordDB.cbtm', 'w')
             for i in all_record: fwrec.write(i + '\n')
@@ -426,8 +402,9 @@ def del_record12(*_): # 최근 기록 12회 삭제
         if time_running:
             return
         
-        farec = open('record.cbtm', 'r')
+        farec = open('recordDB.cbtm', 'r')
         all_record = [i.rstrip() for i in farec.readlines()]
+
         if len(all_record) == 0:
             messagebox.showerror(title = 'Error', message = '삭제할 기록이 없습니다.')
             farec.close()
@@ -442,10 +419,6 @@ def del_record12(*_): # 최근 기록 12회 삭제
 
             ask_delrec12 = messagebox.askquestion(title = '알림', message = '최근 기록 12회를 삭제하시겠습니까?')
             if ask_delrec12 == 'yes':
-                # record.cbtm
-                fwrec = open('record.cbtm', 'w')
-                for i in all_record: fwrec.write(i + '\n')
-                fwrec.close()
                 # recordDB.cbtm
                 fwrec = open('recordDB.cbtm', 'w')
                 for i in all_record: fwrec.write(i + '\n')
@@ -469,13 +442,11 @@ def del_recordall(case=1): # 측정된 모든 기록 삭제
         if case == 1:
             ask_delrecall = messagebox.askquestion(title = '알림', message = '측정된 모든 기록을 삭제하시겠습니까?')
             if ask_delrecall == 'yes':
-                farec = open('record.cbtm', 'w'); farec.close()
                 farec = open('recordDB.cbtm', 'w'); farec.close()
                 farec = open('isP.cbtm', 'w'); farec.close()
         elif case == 2:
             ask_delrec12 = messagebox.askquestion(title = '알림', message = '최근 기록 12회를 삭제하시겠습니까?')
             if ask_delrec12 == 'yes':
-                farec = open('record.cbtm', 'w'); farec.close()
                 farec = open('recordDB.cbtm', 'w'); farec.close()
                 farec = open('isP.cbtm', 'w'); farec.close()
         bundle1()
@@ -489,86 +460,69 @@ def dnf_add(*_): # 최근 기록에 DNF 추가
         if time_running:
             return
         
-        farec = open('record.cbtm', 'r')
-        all_record = [i.rstrip() for i in farec.readlines()]
+        farec = open('recordDB.cbtm', 'r')
+        all_info = [i for i in farec.readlines()]
         farec.close()
-        if len(all_record) == 0:
+
+        if len(all_info) == 0:
             messagebox.showerror(title = 'Exception', message = 'DNF 처리할 기록이 없습니다.')
-        elif all_record[-1] == '0':
+        elif all_info[-1][0] == '0' and all_info[-1][1] == '/':
             messagebox.showerror(title = 'Exception', message = '이미 DNF 처리된 기록입니다.')
         else:
-            ask_dnfadd = messagebox.askquestion(title = '알림', message = f'최근 기록({all_record[-1]})을 DNF 처리하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')
+            ask_dnfadd = messagebox.askquestion(title = '알림', message = f'최근 기록을 DNF 처리하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')
             if ask_dnfadd == 'yes':
-                all_record[-1] = '0'
-            # record.cbtm
-            fwrec = open('record.cbtm', 'w')
-            for i in all_record: fwrec.write(str(i) + '\n')
-            fwrec.close()
-            # recordDB.cbtm
-            frrec = open('recordDB.cbtm', 'r')
-            all_record2 = []
-            for i in frrec.readlines():
-                ii = eval(i.rstrip())
-                all_record2.append(ii) 
-            frrec.close()
-            tmp = all_record2.pop(); tmp[0] = 0
-            all_record2.append(tmp)
-            fwrec = open('recordDB.cbtm', 'w')
-            for i in all_record2: fwrec.write(str(i) + '\n')
-            fwrec.close()
-
-        bundle1()
+                record_origin, scramble, penalty = all_info.pop().split('/')
+                record_origin = '0'
+                new_info = '/'.join([record_origin, scramble, penalty])
+                all_info.append(new_info)
+                fwrec = open('recordDB.cbtm', 'w')
+                for i in all_info:
+                    fwrec.write(i)
+                fwrec.close()
+                bundle1()
+            else:
+                return
     except:
         sys.stderr.write('Error: Cannot add DNF.\n')
         messagebox.showerror(title = 'Exception', message = 'DNF 처리하는 과정에서 문제가 발생했습니다.')
 
-def penalty_add(*_): # 최근 기록에 2초 패널티 추가
+def penalty_add(*_): # 최근 기록에 2초 페널티 추가
     try:
         if time_running:
             return
         
-        farec = open('isP.cbtm', 'r'); farec2 = open('record.cbtm', 'r')
-        all_record = [i.rstrip() for i in farec.readlines()] # isP
-        all_record2 = [i.rstrip() for i in farec2.readlines()] # record
-        farec.close(); farec2.close()
-        recent_ = float(all_record2[-1])
-        if len(all_record) == 0:
-            messagebox.showerror(title = 'Error', message = '패널티를 추가할 기록이 없습니다.')
+        farec = open('recordDB.cbtm', 'r')
+        all_info = [i for i in farec.readlines()]
+        farec.close()
+
+        if len(all_info) == 0:
+            messagebox.showerror(title = 'Error', message = '페널티를 추가할 기록이 없습니다.')
             return
-        elif all_record[-1] == '1':
-            messagebox.showerror(title = 'Error', message = '이미 2초 패널티가 추가된 기록입니다.')
+        
+        record_origin, scramble, penalty = all_info.pop().split('/')
+        if penalty == '1':
+            messagebox.showerror(title = 'Error', message = '이미 2초 페널티가 추가된 기록입니다.')
             return
-        elif all_record2[-1] == '0':
-            messagebox.showerror(title = 'Error', message = 'DNF 기록에는 2초 패널티를 추가할 수 없습니다.')
+        elif record_origin == '0':
+            messagebox.showerror(title = 'Error', message = 'DNF 기록에는 2초 페널티를 추가할 수 없습니다.')
             return
         else:
-            ask_addpnl = messagebox.askquestion(title = '알림', message = '최근 기록 1회에 2초 패널티를 추가하시겠습니까?')
+            ask_addpnl = messagebox.askquestion(title = '알림', message = '최근 기록 1회에 2초 페널티를 추가하시겠습니까?')
             if ask_addpnl == 'yes':
-                # isP.cbtm
-                all_record[-1] = '1'
-                fwrec = open('isP.cbtm', 'w')
-                for i in all_record: fwrec.write(str(i) + '\n')
-                fwrec.close()
-                # record.cbtm
-                all_record2.pop(); all_record2.append(round(recent_+2, 3))
-                fwrec = open('record.cbtm', 'w')
-                for i in all_record2: fwrec.write(str(i) + '\n')
-                fwrec.close()
-                # recordDB.cbtm
-                frrec = open('recordDB.cbtm', 'r')
-                all_record3 = []
-                for i in frrec.readlines():
-                    ii = eval(i.rstrip())
-                    all_record3.append(ii)
-                tmp = all_record3.pop(); tmp[0] = round(recent_+2, 3); all_record3.append(tmp)
-                frrec.close()
+                record_origin = str(float(record_origin) + 2)
+                penalty = '1\n'
+                new_info = '/'.join([record_origin, scramble, penalty])
+                all_info.append(new_info)
                 fwrec = open('recordDB.cbtm', 'w')
-                for i in all_record3: fwrec.write(str(i) + '\n')
+                for i in all_info:
+                    fwrec.write(i)
+                #fwrec.write('\n')
                 fwrec.close()
-
-            bundle1()
+                bundle1()
+            else:
+                return
     except:
-        messagebox.showerror(title = 'Exception', message = '패널티를 추가하는 과정에서 문제가 발생했습니다.')
+        messagebox.showerror(title = 'Exception', message = '페널티를 추가하는 과정에서 문제가 발생했습니다.')
 
 def change_txtcol(*_):
     if not time_running:
@@ -704,7 +658,7 @@ class Timer(tk.Frame): # 메인 윈도우 구성
         penalty_bt_menu.add_command(label = '최근 기록 모두 삭제', command = del_recordall)
         penalty_bt_menu.add_separator()
         penalty_bt_menu.add_command(label = '최근 기록 1회 DNF 처리(D)', command = dnf_add)
-        penalty_bt_menu.add_command(label = '최근 기록 1회 2초 패널티 추가(E)', command = penalty_add)
+        penalty_bt_menu.add_command(label = '최근 기록 1회 2초 페널티 추가(E)', command = penalty_add)
         penalty_bt["menu"] = penalty_bt_menu
 
         help_bt = tk.Button(mainWindow, font = ('맑은 고딕', 12), text = '도움말', command = help_win)
@@ -733,14 +687,14 @@ def help_win():
     help_txt.insert(tk.END, '· 스페이스 바를 다시 누르면 타이머가 정지되고 측정된 기록이 저장됩니다.\n')
     help_txt.insert(tk.END, '· 우측 -최근 기록- 에서 저장된 기록들을 확인할 수 있으며, 측정 일시가 빠른 순으로 표시됩니다.\n')
     help_txt.insert(tk.END, '· 최근 기록 1회, 12회, 전체를 삭제할 수 있으며, 이 작업은 되돌릴 수 없습니다.\n')
-    help_txt.insert(tk.END, '· 최근 기록 1회에 대해서 DNF와 2초 패널티를 적용할 수 있으며, 이 작업은 되돌릴 수 없습니다.\n\n')
+    help_txt.insert(tk.END, '· 최근 기록 1회에 대해서 DNF와 2초 페널티를 적용할 수 있으며, 이 작업은 되돌릴 수 없습니다.\n\n')
     help_txt.insert(tk.END, '※ 기록 측정 방식\n')
     help_txt.insert(tk.END, '· DNF가 2회 이상일 경우 5회, 12회, 전체 평균, 최고 기록이 모두 DNF로 표시됩니다.\n\n')
     help_txt.insert(tk.END, '※ 단축키 활용\n')
     help_txt.insert(tk.END, '· 최근 기록 1회 삭제: Q키\n')
     help_txt.insert(tk.END, '· 최근 기록 12회 삭제: W키\n')
     help_txt.insert(tk.END, '· 최근 기록 1회 DNF 처리: D키\n')
-    help_txt.insert(tk.END, '· 최근 기록 1회 2초 패널티 추가: E키\n')
+    help_txt.insert(tk.END, '· 최근 기록 1회 2초 페널티 추가: E키\n')
     help_txt.insert(tk.END, '· 텍스트 파일로 기록 내보내기: T키\n')
     help_txt.insert(tk.END, '\n')
     help_txt.insert(tk.END, '\n')
