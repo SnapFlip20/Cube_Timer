@@ -37,10 +37,6 @@ def checkFileSetting():
         sys.stderr.write('Error: cannot find recordDB.cbtm.\n')
         messagebox.showerror('.../recordDB.cbtm 파일이 존재하지 않습니다.')
         return False
-    if not os.path.isfile('isP.cbtm'):
-        sys.stderr.write('Error: cannot find isP.cbtm.\n')
-        messagebox.showerror('.../isP.cbtm 파일이 존재하지 않습니다.')
-        return False
     if not genScramble._test():
         sys.stderr.write('Error: There was an error in src/genScramble.py.\n')
         messagebox.showerror('.../scr/genScramble.py 파일에서 오류가 발생했습니다.')
