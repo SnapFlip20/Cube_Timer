@@ -1,12 +1,12 @@
 #-*- coding:utf-8 -*-
-# Cube_Timer v0.3.2 --------- by SnapFlip20
+# Cube_Timer v0.3.3 --------- by SnapFlip20
 # https://github.com/SnapFlip20/Cube_Timer
 
-import tkinter as tk
 from tkinter import messagebox, scrolledtext
+import tkinter as tk
 import datetime, os, time, statistics, sys
 
-version = 'v0.3.2'
+version = 'v0.3.3'
 
 # -check---------------------------------------------------------- #
 
@@ -35,14 +35,15 @@ def checkFileSetting():
             sys.stderr.write('Error: cannot find Cube_Timer_logo.gif.\n')
             messagebox.showerror('gif 이미지 파일이 존재하지 않습니다.')
             return False
+    
     if not os.path.isfile(f'Cube_Timer_logo.gif'):
         sys.stderr.write('Error: cannot find Cube_Timer_logo.gif.\n')
         messagebox.showerror('.../Cube_Timer_logo.gif 이미지 파일이 존재하지 않습니다.')
         return False
     
-    if not os.path.isfile('./image/icon.png'):
+    if not os.path.isfile('./image/icon.ico'):
         sys.stderr.write('Error: cannot find Cube_Timer_logo.gif.\n')
-        messagebox.showerror('.../image/icon.png 파일이 존재하지 않습니다.')
+        messagebox.showerror('.../image/icon.ico 파일이 존재하지 않습니다.')
         return False
 
     if not os.path.isfile('recordDB.cbtm'):
@@ -59,7 +60,7 @@ def checkFileSetting():
 
 # -check end------------------------------------------------------ #
 
-def run():
+def run(): # 타이머 작동 시 계속해서 실행됨
     global time_running, start_time, stop_time, previous_time, elapsed_time
 
     if time_running:
@@ -70,9 +71,9 @@ def run():
         elapsed_time = time_dif+previous_time
         time_txt.configure(text = f'{time_converter(elapsed_time)}')
     
-    mainWindow.after(1, run)
+    mainWindow.after(10, run)
 
-def scr_refresh(*_):
+def scr_refresh(*_): # 스크램블 갱신
     global scramble_lst,\
         color1, color2, color3, color4, color5, color6, color7, color8, color9
     
@@ -84,40 +85,36 @@ def scr_refresh(*_):
     scramble_box = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal', width = 10)
     scramble_box.place(x = 50, y = 230, width = 350, height = 100)
 
-    try:
-        scramble_lst = genScramble.gen_scramble()
-        scr_result = showScrambleImg.return_color(scramble_lst)
-        color1 = tk.PhotoImage(file = "image/{}".format(scr_result[0]+'.gif'))
-        colorf1 = tk.Label(mainWindow, image = color1)
-        colorf1.place(x = 430, y = 180)
-        color2 = tk.PhotoImage(file = "image/{}".format(scr_result[1]+'.gif'))
-        colorf2 = tk.Label(mainWindow, image = color2)
-        colorf2.place(x = 475, y = 180)
-        color3 = tk.PhotoImage(file = "image/{}".format(scr_result[2]+'.gif'))
-        colorf3 = tk.Label(mainWindow, image = color3)
-        colorf3.place(x = 520, y = 180)
-        color4 = tk.PhotoImage(file = "image/{}".format(scr_result[3]+'.gif'))
-        colorf4 = tk.Label(mainWindow, image = color4)
-        colorf4.place(x = 430, y = 225)
-        color5 = tk.PhotoImage(file = "image/{}".format(scr_result[4]+'.gif'))
-        colorf5 = tk.Label(mainWindow, image = color5)
-        colorf5.place(x = 475, y = 225)
-        color6 = tk.PhotoImage(file = "image/{}".format(scr_result[5]+'.gif'))
-        colorf6 = tk.Label(mainWindow, image = color6)
-        colorf6.place(x = 520, y = 225)
-        color7 = tk.PhotoImage(file = "image/{}".format(scr_result[6]+'.gif'))
-        colorf7 = tk.Label(mainWindow, image = color7)
-        colorf7.place(x = 430, y = 270)
-        color8 = tk.PhotoImage(file = "image/{}".format(scr_result[7]+'.gif'))
-        colorf8 = tk.Label(mainWindow, image = color8)
-        colorf8.place(x = 475, y = 270)
-        color9 = tk.PhotoImage(file = "image/{}".format(scr_result[8]+'.gif'))
-        colorf9 = tk.Label(mainWindow, image = color9)
-        colorf9.place(x = 520, y = 270)
-    except:
-        sys.stderr.write('Error: scramble loading was failed.\n')
-        messagebox.showerror(title = 'Exception', message = 'Scramble 을(를) 구성하는 도중 오류가 발생했습니다.')
-        sys.exit()
+    # 스크램블 결과 이미지 표시
+    scramble_lst = genScramble.gen_scramble()
+    scr_result = showScrambleImg.return_color(scramble_lst)
+    color1 = tk.PhotoImage(file = "image/{}".format(scr_result[0]+'.gif'))
+    colorf1 = tk.Label(mainWindow, image = color1)
+    colorf1.place(x = 430, y = 180)
+    color2 = tk.PhotoImage(file = "image/{}".format(scr_result[1]+'.gif'))
+    colorf2 = tk.Label(mainWindow, image = color2)
+    colorf2.place(x = 475, y = 180)
+    color3 = tk.PhotoImage(file = "image/{}".format(scr_result[2]+'.gif'))
+    colorf3 = tk.Label(mainWindow, image = color3)
+    colorf3.place(x = 520, y = 180)
+    color4 = tk.PhotoImage(file = "image/{}".format(scr_result[3]+'.gif'))
+    colorf4 = tk.Label(mainWindow, image = color4)
+    colorf4.place(x = 430, y = 225)
+    color5 = tk.PhotoImage(file = "image/{}".format(scr_result[4]+'.gif'))
+    colorf5 = tk.Label(mainWindow, image = color5)
+    colorf5.place(x = 475, y = 225)
+    color6 = tk.PhotoImage(file = "image/{}".format(scr_result[5]+'.gif'))
+    colorf6 = tk.Label(mainWindow, image = color6)
+    colorf6.place(x = 520, y = 225)
+    color7 = tk.PhotoImage(file = "image/{}".format(scr_result[6]+'.gif'))
+    colorf7 = tk.Label(mainWindow, image = color7)
+    colorf7.place(x = 430, y = 270)
+    color8 = tk.PhotoImage(file = "image/{}".format(scr_result[7]+'.gif'))
+    colorf8 = tk.Label(mainWindow, image = color8)
+    colorf8.place(x = 475, y = 270)
+    color9 = tk.PhotoImage(file = "image/{}".format(scr_result[8]+'.gif'))
+    colorf9 = tk.Label(mainWindow, image = color9)
+    colorf9.place(x = 520, y = 270)
     
     scramble_box.insert(tk.INSERT, scramble_lst)
     scramble_box.configure(state = 'disabled')
@@ -154,15 +151,16 @@ def reset(*_): # 타이머 리셋
     previous_time = 0.0
     time_txt.configure(text = '0:00.000')
 
-def record_new(t, sc):
+def record_new(t, sc): # 측정된 기록을 cbtm 파일에 저장
     farec = open('recordDB.cbtm', 'a')
     farec.write(f'{t}/{sc}/0' + '\n')
     farec.close()
 
-def load_record():
+def load_record(): # cbtm 파일로부터 기록 불러오기
     record_info1 = tk.Label(mainWindow, font = ('맑은 고딕 bold', 15), text = '[ 최근 기록 ]')
     record_info1.place(x = 436, y = 345)
 
+    # 최근 기록 창에 저장된 기록 삽입
     rec1 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
     rec1.place(x = 435, y = 390, width = 125, height = 30)
     rec2 = tk.Text(mainWindow, font = ('맑은 고딕', 15), wrap = 'word', state = 'normal')
@@ -222,7 +220,7 @@ def load_record():
         messagebox.showerror(title = 'Exception', message = '파일 "record.cbtm" 을(를) 찾을 수 없습니다.')
         sys.exit()
 
-def time_converter(s):
+def time_converter(s): # 기록을 mm:ss.ms 형태의 문자열로 변환
     ms = round(s - int(s), 3); s = int(s)
     h = s//3600; s -= h*3600
     m = s//60; s -= m*60
@@ -548,7 +546,7 @@ def penalty_add(*_): # 최근 기록에 2초 페널티 추가
     except:
         messagebox.showerror(title = 'Exception', message = '페널티를 추가하는 과정에서 문제가 발생했습니다.')
 
-def change_txtcol(*_):
+def change_txtcol(*_): # 스페이스바를 누를 때 숫자 색깔을 빨간색으로 변경
     if not time_running:
         time_txt.configure(text = '0:00.000', fg = 'red')
 
@@ -567,12 +565,12 @@ def record_to_txt(*_): # 최근 기록을 txt파일로 추출
     allRecord = []; mn = 0
 
     for i in all_info:
-        tm, sc, pn = i.split('/')
+        tm, sc, pn = i.split('/') # 시간, 스크램블, 페널티 여부
         allRecord.append(float(tm))
     
-    if 0 in allRecord:
+    if 0 in allRecord: # DNF 1회 제외 평균 계산
         mn = sum(allRecord)/(len(allRecord)-1)
-    else:
+    else: # 전체 평균 계산
         mn = sum(allRecord)/len(allRecord)
 
     allRecord.sort()
@@ -587,7 +585,7 @@ def record_to_txt(*_): # 최근 기록을 txt파일로 추출
     fwrec.write('\n')
 
     for idx, r in enumerate(all_info):
-        tm, sc, pn = r.split('/')
+        tm, sc, pn = r.split('/') # 시간, 스크램블, 페널티 여부
 
         if tm == '0':
             fwrec.write(f'{idx+1}. DNF      | ')
@@ -626,7 +624,7 @@ def bundle(): # 기록 새로고침 관련 함수 모음
 # -mainUI--------------------------------------------------------- #
 class Timer(tk.Frame): # 메인 윈도우 구성
     def __init__(self):
-        global mainWindow, time_running, start_time, stop_time, previous_time, elapsed_time,\
+        global mainWindow, helpWindow, time_running, start_time, stop_time, previous_time, elapsed_time,\
             time_txt, logo_image,\
                 penalty_bt, penalty_bt_menu, help_bt, textsave_bt
         
@@ -639,7 +637,7 @@ class Timer(tk.Frame): # 메인 윈도우 구성
 
         # ---Main UI setting start-----------------------------------------------
         # icon image
-        mainWindow.call('wm', 'iconphoto', mainWindow, tk.PhotoImage(file='image/icon.png'))
+        mainWindow.call('wm', 'iconphoto', mainWindow, tk.PhotoImage(file='image/icon.ico'))
         
         # logo image
         logo_image = tk.PhotoImage(file = "Cube_Timer_logo.gif")
@@ -695,18 +693,19 @@ class Timer(tk.Frame): # 메인 윈도우 구성
 
 
 
-def help_win():
-    global help_txt1
+def help_win(): # 도움말 창
+    global helpWindow, help_txt1
 
     if time_running:
         return
     
-    helpWindow = tk.Tk()
+    helpWindow = tk.Toplevel(mainWindow)
     helpWindow.geometry("400x650")
     helpWindow.resizable(width = False, height = False)
     helpWindow.title('도움말')
+    helpWindow.iconphoto(False, tk.PhotoImage(file='image/icon.ico'))
+
     help_txt = scrolledtext.ScrolledText(helpWindow, width = 40, height = 30, font = ('맑은 고딕', 12))
-    
     help_txt.insert(tk.END, f'Cube Timer {version}\n\n')
     help_txt.insert(tk.END, '※ 기록 측정 방법:\n')
     help_txt.insert(tk.END, '· 스페이스 바를 눌렀다가 떼는 순간 타이머가 시작됩니다.\n')
@@ -730,7 +729,6 @@ def help_win():
     
     help_txt.configure(state = 'disabled')
     help_txt.pack()
-    helpWindow.mainloop()
 
 def comming_soon():
     messagebox.showinfo(title = '알림', message = '업데이트 예정입니다.')

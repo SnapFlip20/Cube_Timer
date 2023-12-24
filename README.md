@@ -16,7 +16,7 @@
 * 측정된 기록들은 별도의 파일로 관리
 
 ## 개발 현황
-* v0.3.2를 마지막으로 업데이트 잠정 중단
+* 비정기적으로 업데이트 중
 
 ## 참고자료
 * [WCA 공식 사이트](https://www.worldcubeassociation.org/regulations/)
